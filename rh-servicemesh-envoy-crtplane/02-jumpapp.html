@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Deploy Jump App :: Red Hat Service Mesh - Envoy &amp; Istio Control Plane</title>
+    <link rel="canonical" href="http://localhost:3000/rhs-build-course/index.html/rh-servicemesh-envoy-crtplane/02-jumpapp.html">
+    <link rel="prev" href="01-setup.html">
+    <link rel="next" href="03-flows.html">
+    <meta name="generator" content="Antora 2.3.4">
+    <link rel="stylesheet" href="../_/css/site.css">
+<link rel="icon" href="../_/img/favicon.ico" type="image/x-icon">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://developers.redhat.com" target="_blank"><img
+          src="../_/img/header_logo.png" height="40px" alt="Red Hat Developer Program"></a>
+      <a class="navbar-item" href="http://localhost:3000/rhs-build-course/index.html">Red Hat Service Mesh - Envoy &amp; Istio Control Plane</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="#">Books</a>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">CheatSheets</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">CheatSheet A</a>
+            <a class="navbar-item" href="#">CheatSheet B</a>
+            <a class="navbar-item" href="#">CheatSheet C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">Upcoming Events</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Event A</a>
+            <a class="navbar-item" href="#">Event B</a>
+            <a class="navbar-item" href="#">Event C</a>
+          </div>
+        </div>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link" href="#">More Tutorials</a>
+          <div class="navbar-dropdown">
+            <a class="navbar-item" href="#">Tutorial A</a>
+            <a class="navbar-item" href="#">Tutorial B</a>
+            <a class="navbar-item" href="#">Tutorial C</a>
+          </div>
+        </div>
+        <div class="navbar-item">
+          <span class="control">
+            <a class="button is-primary" href="#">Download</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="rh-servicemesh-envoy-crtplane" data-version="master">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="index.html">Red Hat Service Mesh - Envoy &amp; Istio Control Plane</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="01-setup.html">1. Setup</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-setup.html#prerequisites">1.1 Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-setup.html#laboratory">1.2 Laboratory</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="02-jumpapp.html">2. Jump App Deployment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#login">2.1 Login in Openshift</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#github">2.2 Clone GitHub Repository</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#jumpappobjects">2.3 Create Jump App Objects in Openshift by Helm</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#test">2.4 Confirm Jump App is already running in Openshift</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-flows.html">3. Service Mesh Communication Flows</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-flows.html#gw">3.1 Gateways</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-flows.html#vsvc">3.2 Virtual Services</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-flows.html#dr">3.3 Destination Rules</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-flows.html#annotation">3.4 Add Istio Sidecar annotation in Jump App deployments</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-flows.html#routes">3.5 Configure Routes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-flows.html#test">3.6 Confirm Jump App is running again</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="04-relationship.html">4. Istio-Envoy Objects Relationship</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="05-envoy.html">5. Envoy Proxy</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="06-crtlplane.html">6. Istio Control Plane</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="07-services.html">7. Istio Global Services</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat Service Mesh - Envoy &amp; Istio Control Plane</span>
+    <span class="version">master</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <span class="title">Red Hat Service Mesh - Envoy & Istio Control Plane</span>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="index.html">master</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="index.html">Red Hat Service Mesh - Envoy & Istio Control Plane</a></li>
+    <li><a href="02-jumpapp.html">2. Jump App Deployment</a></li>
+  </ul>
+</nav>
+  <div class="edit-this-page"><a href="https://github.com/acidonper/rh-service-mesh-v2-istio-crtlplane/edit/master/documentation/modules/ROOT/pages/02-jumpapp.adoc">Edit this Page</a></div>
+  </div>
+  <div class="content">
+<article class="doc">
+<h1 class="page">Deploy Jump App</h1>
+<div class="sect1">
+<h2 id="_deploy_jump_app_microservices"><a class="anchor" href="#_deploy_jump_app_microservices"></a>Deploy <em>Jump App</em> Microservices</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Jump App</em> is a microservice-based application created to emulate an enterprise application complex architecture with multi environments. This app allows users to configure a set of jumps between components and generate a continuous traffic flow defining the number of retries and their span of time.</p>
+</div>
+<div class="paragraph">
+<p>First at all, it is required to deploy Jump App application in Openshift in order to have the demo application environment ready. The following steps in this section helps you to deploy <em>Jump App</em>.</p>
+</div>
+<div class="sect2">
+<h3 id="login"><a class="anchor" href="#login"></a>Login in Openshift</h3>
+<div class="listingblock lines_space console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc login -u &lt;user&gt; -p &lt;pass&gt; &lt;ocp_cluster_url&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">Login successful.
+
+You have access to 65 projects, the list has been suppressed. You can list all projects with 'oc projects'
+
+Using project "default".</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="github"><a class="anchor" href="#github"></a>Clone GitHub Repository</h3>
+<div class="paragraph">
+<p><em>Jump App Gitops</em> is one of a set of repositories developed to generate a microservice based application, named Jump App. This repository includes an automated way of deploy Jump App&#8217;s microservices and all stuff around this application (Deployments, Services, Build Configs, Pipelines, etc), including optionally CI/CD or Service Mesh objects as well.</p>
+</div>
+<div class="paragraph">
+<p>Please, follow next steps in order to download the GitHub repository code:</p>
+</div>
+<div class="listingblock lines_space console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone <a href="https://github.com/acidonper/jump-app-gitops.git" class="bare">https://github.com/acidonper/jump-app-gitops.git</a>
+git submodule update --remote</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="jumpappobjects"><a class="anchor" href="#jumpappobjects"></a>Create <em>Jump App</em> Objects in Openshift by Helm</h3>
+<div class="listingblock lines_7 console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc project &lt;user_namespace&gt;
+helm template ./charts/jump-app-micros -f examples/local/values-jump-app-dev.yaml --namespace &lt;user_namespace&gt; | oc apply -f - -n &lt;user_namespace&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">rolebinding.rbac.authorization.k8s.io/tekton-deployments-admin created
+service/back-golang created
+service/back-python created
+service/back-springboot created
+service/front-javascript created
+deployment.apps/back-golang-v1 created
+deployment.apps/back-python-v1 created
+deployment.apps/back-springboot-v1 created
+deployment.apps/front-javascript-v1 created
+secret/mongo created
+service/mongo created
+deployment.apps/mongo created
+route.route.openshift.io/back-golang-v1 created
+route.route.openshift.io/back-golang created
+route.route.openshift.io/back-javascript-v1 created
+route.route.openshift.io/back-javascript created</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="test"><a class="anchor" href="#test"></a>Confirm <em>Jump App</em> is already running in Openshift</h3>
+<div class="paragraph">
+<p>Once <em>Jump App</em> objects have been created in Openshift, it is required to follow next steps in order to ensure your demo app is running properly:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Get pods</p>
+</li>
+</ul>
+</div>
+<div class="listingblock lines_7 console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc get pods</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">NAME                                   READY   STATUS    RESTARTS   AGE
+back-golang-v1-7fb9ff7bdc-mwp8b        1/1     Running   0          1m
+back-python-v1-74c65d94b5-9hzxd        1/1     Running   0          1m
+back-springboot-v1-74db6bb8b4-pw74s    1/1     Running   0          1m
+front-javascript-v1-7b6d4fb65c-9fdfb   1/1     Running   0          1m
+mongo-7c8f67cc4b-t9dnf                 1/1     Running   0          1m</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Obtain external services URLs</p>
+</li>
+</ul>
+</div>
+<div class="listingblock lines_7 console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc get routes -n &lt;user_namespace&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">back-golang           back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;          &lt;user_namespace&gt;   http2   edge/Redirect        None
+back-golang-v1        back-golang-v1-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;       &lt;user_namespace&gt;   http2   edge/Redirect        None
+front-javascript      front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;     &lt;user_namespace&gt;   http2   edge/Redirect        None
+front-javascript-v1   front-javascript-v1-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;  &lt;user_namespace&gt;   http2   edge/Redirect        None</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Visit the <strong>back</strong>, <em>back-golang</em>, route via your web browser</p>
+</li>
+<li>
+<p>Visit the <strong>front</strong>, <em>front-javascript</em>, route via your web browser, push <strong>- JUMP-</strong> button and ensure the following message is displaying in your screen</p>
+</li>
+</ul>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">Jump 0 -&gt; &lt;tutorial_date&gt; GMT+0100 (Central European Standard Time) {"code":200,"message":"/jump - Greetings from Python!"}</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+It is required to accept <strong>self-signed certificates</strong> provided by Openshift
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="01-setup.html">1. Setup</a></span>
+  <span class="next"><a href="03-flows.html">3. Service Mesh Communication Flows</a></span>
+</nav>
+</article>
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <a class="rhd-logo" href="https://developers.redhat.com" target="_blank"></div>
+</footer>
+<script src="../_/js/vendor/clipboard.js"></script>
+<script src="../_/js/site.js"></script>
+<script async src="../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
