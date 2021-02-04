@@ -130,21 +130,24 @@
     <a class="nav-link" href="04-relationship.html">4. Istio-Envoy Objects Relationship</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="04-relationship.html#vsvc">4.1 Virtual Services</a>
+    <a class="nav-link" href="04-relationship.html#dr">4.1 Destination Rules</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="04-relationship.html#dr">4.2 Destination Rules</a>
+    <a class="nav-link" href="04-relationship.html#vsvc">4.2 Virtual Services</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="04-relationship.html#se">4.3 Service Entry</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="04-relationship.html#ef">4.4 Envoy Filters</a>
-  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
     <a class="nav-link" href="05-envoy.html">5. Envoy Proxy</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-envoy.html#ef">5.1 Envoy Filters</a>
+  </li>
+</ul>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="06-crtlplane.html">6. Istio Control Plane</a>
@@ -282,6 +285,7 @@ route.route.openshift.io/back-javascript created</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">NAME                                   READY   STATUS    RESTARTS   AGE
 back-golang-v1-7fb9ff7bdc-mwp8b        1/1     Running   0          1m
+back-golang-v2-213fhfd23d-23ass        1/1     Running   0          1m
 back-python-v1-74c65d94b5-9hzxd        1/1     Running   0          1m
 back-springboot-v1-74db6bb8b4-pw74s    1/1     Running   0          1m
 front-javascript-v1-7b6d4fb65c-9fdfb   1/1     Running   0          1m
@@ -304,6 +308,7 @@ mongo-7c8f67cc4b-t9dnf                 1/1     Running   0          1m</code></p
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">back-golang           back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;          &lt;user_namespace&gt;   http2   edge/Redirect        None
 back-golang-v1        back-golang-v1-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;       &lt;user_namespace&gt;   http2   edge/Redirect        None
+back-golang-v2        back-golang-v1-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;       &lt;user_namespace&gt;   http2   edge/Redirect        None
 front-javascript      front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;     &lt;user_namespace&gt;   http2   edge/Redirect        None
 front-javascript-v1   front-javascript-v1-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;  &lt;user_namespace&gt;   http2   edge/Redirect        None</code></pre>
 </div>

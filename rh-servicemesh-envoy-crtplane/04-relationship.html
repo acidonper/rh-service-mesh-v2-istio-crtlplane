@@ -130,21 +130,24 @@
     <a class="nav-link" href="04-relationship.html">4. Istio-Envoy Objects Relationship</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#vsvc">4.1 Virtual Services</a>
+    <a class="nav-link" href="#dr">4.1 Destination Rules</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#dr">4.2 Destination Rules</a>
+    <a class="nav-link" href="#vsvc">4.2 Virtual Services</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="#se">4.3 Service Entry</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#ef">4.4 Envoy Filters</a>
-  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
     <a class="nav-link" href="05-envoy.html">5. Envoy Proxy</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-envoy.html#ef">5.1 Envoy Filters</a>
+  </li>
+</ul>
   </li>
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="06-crtlplane.html">6. Istio Control Plane</a>
@@ -213,66 +216,6 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> and <strong>&lt;pod_id&g
 </table>
 </div>
 <div class="sect2">
-<h3 id="vsvc"><a class="anchor" href="#vsvc"></a>Virtual Services</h3>
-<div class="paragraph">
-<p>Before applying changes, please save the original Envoy proxy configuration following next steps:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-virtual-service-orig.json</code></pre>
-</div>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">{
- "configs": [
-  {
-   "@type": "type.googleapis.com/envoy.admin.v3.BootstrapConfigDump",
-   "bootstrap": {
-    "node": {
-     "id": "sidecar~10.128.2.23~back-golang-v1-&lt;pod_id&gt;.&lt;user_namespace&gt;~&lt;user_namespace&gt;.svc.cluster.local",
-...</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>It is time to added a new <em>Virtual Service</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
-virtualservice</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Once this new <em>Virtual Service</em> has been created, save the custom Envoy proxy configuration following next steps:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-virtual-service-custom.json</code></pre>
-</div>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">{
- "configs": [
-  {
-   "@type": "type.googleapis.com/envoy.admin.v3.BootstrapConfigDump",
-   "bootstrap": {
-    "node": {
-     "id": "sidecar~10.128.2.23~back-golang-v1-&lt;pod_id&gt;.&lt;user_namespace&gt;~&lt;user_namespace&gt;.svc.cluster.local",
-...</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Finally, compare both files differences and draw a definitive conclusion:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">diff back-golang-v1-&lt;pod_id&gt;-virtual-service-orig.json back-golang-v1-&lt;pod_id&gt;-virtual-service-custom.json</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
 <h3 id="dr"><a class="anchor" href="#dr"></a>Destination Rules</h3>
 <div class="paragraph">
 <p>Before applying changes, please save the original Envoy proxy configuration following next steps:</p>
@@ -294,13 +237,37 @@ virtualservice</code></pre>
 ...</code></pre>
 </div>
 </div>
-<div class="paragraph">
+<div class="ulist">
+<ul>
+<li>
 <p>It is time to added a new <em>Destination Rule</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
+</li>
+</ul>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
-destinationrule</code></pre>
+apiVersion: networking.istio.io/v1alpha3
+kind: DestinationRule
+metadata:
+  name: back-golang
+spec:
+  host: back-golang.&lt;user_namespace&gt;.cluster.local
+  subsets:
+    - labels:
+        version: v1
+      name: v1
+    - labels:
+        version: v2
+      name: v2</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Apply this object through _oc_client:</p>
+</div>
+<div class="listingblock lines_space console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f destination-rule-orig.json</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -333,6 +300,212 @@ destinationrule</code></pre>
 </div>
 </div>
 <div class="sect2">
+<h3 id="vsvc"><a class="anchor" href="#vsvc"></a>Virtual Services</h3>
+<div class="paragraph">
+<p>Before applying changes, please save the original Envoy proxy configuration following next steps:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-virtual-service-orig.json</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">{
+ "configs": [
+  {
+   "@type": "type.googleapis.com/envoy.admin.v3.BootstrapConfigDump",
+   "bootstrap": {
+    "node": {
+     "id": "sidecar~10.128.2.23~back-golang-v1-&lt;pod_id&gt;.&lt;user_namespace&gt;~&lt;user_namespace&gt;.svc.cluster.local",
+...</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>It is time to added a new <em>Virtual Service</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: back-golang
+spec:
+  gateways:
+  - back-golang
+  - mesh
+  hosts:
+  - back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;
+  - back-golang.&lt;user_namespace&gt;.svc.cluster.local
+  - back-golang
+  http:
+  - route:
+      - destination:
+          host: back-golang.&lt;user_namespace&gt;.svc.cluster.local
+          subset: v1
+        weight: 100
+    match:
+      - uri:
+          prefix: /.*
+    rewrite:
+      uri: "/jump"
+    headers:
+      response:
+        set:
+          Redirection: istio-envoy-relationship-test</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Apply this object through _oc_client:</p>
+</div>
+<div class="listingblock lines_space console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f virtual-service-orig.json</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once this new <em>Virtual Service</em> has been created, save the custom Envoy proxy configuration following next steps:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-virtual-service-custom.json</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">{
+ "configs": [
+  {
+   "@type": "type.googleapis.com/envoy.admin.v3.BootstrapConfigDump",
+   "bootstrap": {
+    "node": {
+     "id": "sidecar~10.128.2.23~back-golang-v1-&lt;pod_id&gt;.&lt;user_namespace&gt;~&lt;user_namespace&gt;.svc.cluster.local",
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finally, compare both files differences and draw a definitive conclusion:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">diff back-golang-v1-&lt;pod_id&gt;-virtual-service-orig.json back-golang-v1-&lt;pod_id&gt;-virtual-service-custom.json</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Additionally, perform a GET request using <em>curl</em> in order to test out headers modification
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">curl -k -v <a href="https://back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;/testing" class="bare">https://back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;/testing</a></code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">...
+&lt; redirection: test-to-jump
+...
+{"code":200,"message":"/jump - Greetings from Golang!"}%</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once the previous objects are applied, it is time to test our services again with a multiple number of connections. For this step, please follow the next steps:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Get pods</p>
+</li>
+</ul>
+</div>
+<div class="listingblock lines_7 console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc get pods</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">NAME                                   READY   STATUS    RESTARTS   AGE
+back-golang-v1-7fb9ff7bdc-mwp8b        2/2     Running   0          1m
+back-golang-v2-213fhfd23d-23ass        2/2     Running   0          1m
+back-python-v1-74c65d94b5-9hzxd        2/2     Running   0          1m
+back-springboot-v1-74db6bb8b4-pw74s    2/2     Running   0          1m
+front-javascript-v1-7b6d4fb65c-9fdfb   2/2     Running   0          1m
+mongo-7c8f67cc4b-t9dnf                 2/2     Running   0          1m</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Obtain external services URLs</p>
+</li>
+</ul>
+</div>
+<div class="listingblock lines_7 console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc get routes -n istio-system | grep &lt;user_namespace&gt;</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">back-golang-&lt;user_namespace&gt;        back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;         istio-ingressgateway   http2   edge/Redirect        None
+front-javascript-&lt;user_namespace&gt;   front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;    istio-ingressgateway   http2   edge/Redirect        None</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Visit the <strong>back</strong>, <em>back-golang-&lt;user_namespace&gt;</em>, route via your web browser</p>
+</li>
+<li>
+<p>Visit the <strong>front</strong>, <em>front-javascript-golang-&lt;user_namespace&gt;</em>, route via your web browser. In addition, configure <strong>1000</strong> retries with <strong>1</strong> interval and  push <strong>- JUMP-</strong> button and ensure the following message is displaying in your screen</p>
+</li>
+</ul>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">Jump 0 -&gt; &lt;tutorial_date&gt; GMT+0100 (Central European Standard Time) {"code":200,"message":"/jump - Greetings from Python!"}</code></pre>
+</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+It is required to accept <strong>self-signed certificates</strong> provided by Openshift
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Alternatively, you are able to review the Service Mesh traffic flow by Kiali console visiting &lt;kiali_url&gt;
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
 <h3 id="se"><a class="anchor" href="#se"></a>Service Entry</h3>
 <div class="paragraph">
 <p>Before applying changes, please save the original Envoy proxy configuration following next steps:</p>
@@ -354,13 +527,41 @@ destinationrule</code></pre>
 ...</code></pre>
 </div>
 </div>
-<div class="paragraph">
+<div class="ulist">
+<ul>
+<li>
 <p>It is time to added a new <em>Service Entry</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
+</li>
+</ul>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
-service entry</code></pre>
+apiVersion: networking.istio.io/v1beta1
+kind: ServiceEntry
+metadata:
+  name: external-svc-dns
+spec:
+  hosts:
+  - www.google.es
+  location: MESH_EXTERNAL
+  ports:
+  - number: 443
+    name: https
+    protocol: HTTPS
+  resolution: DNS
+  endpoints:
+  - address: front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;
+    ports:
+      https: 443</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Apply this object through _oc_client:</p>
+</div>
+<div class="listingblock lines_space console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f service-entry-orig.json</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -391,65 +592,55 @@ service entry</code></pre>
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">diff back-golang-v1-&lt;pod_id&gt;-service-entry-orig.json back-golang-v1-&lt;pod_id&gt;-service-entry-custom.json</code></pre>
 </div>
 </div>
-</div>
-<div class="sect2">
-<h3 id="ef"><a class="anchor" href="#ef"></a>Envoy Filters</h3>
-<div class="paragraph">
-<p>Before applying changes, please save the original Envoy proxy configuration following next steps:</p>
-</div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-envoy-filter-orig.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc rsh back-golang-v1-&lt;pod_id&gt;
+$ curl -k -v <a href="https://www.google.es" class="bare">https://www.google.es</a></code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">{
- "configs": [
-  {
-   "@type": "type.googleapis.com/envoy.admin.v3.BootstrapConfigDump",
-   "bootstrap": {
-    "node": {
-     "id": "sidecar~10.128.2.23~back-golang-v1-&lt;pod_id&gt;.&lt;user_namespace&gt;~&lt;user_namespace&gt;.svc.cluster.local",
-...</code></pre>
+<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">...
+  &lt;body&gt;
+    &lt;div&gt;
+      &lt;h1&gt;Application is not available&lt;/h1&gt;
+      &lt;p&gt;The application is currently not serving requests at this endpoint. It may not have been started or is still starting.&lt;/p&gt;
+
+      &lt;div class="alert alert-info"&gt;
+        &lt;p class="info"&gt;
+          Possible reasons you are seeing this page:
+        &lt;/p&gt;
+        &lt;ul&gt;
+          &lt;li&gt;
+            &lt;strong&gt;The host doesn't exist.&lt;/strong&gt;
+            Make sure the hostname was typed correctly and that a route matching this hostname exists.
+          &lt;/li&gt;
+          &lt;li&gt;
+            &lt;strong&gt;The host exists, but doesn't have a matching path.&lt;/strong&gt;
+            Check if the URL path was typed correctly and that the route was created using the desired path.
+          &lt;/li&gt;
+          &lt;li&gt;
+            &lt;strong&gt;Route and path matches, but all pods are down.&lt;/strong&gt;
+            Make sure that the resources exposed by this route (pods, services, deployment configs, etc) have at least one pod running.
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>It is time to added a new <em>Envoy Filters</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
-envoy filter</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Once this new <em>Envoy Filters</em> has been created, save the custom Envoy proxy configuration following next steps:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-envoy-filter-custom.json</code></pre>
-</div>
-</div>
-<div class="listingblock console-output">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">{
- "configs": [
-  {
-   "@type": "type.googleapis.com/envoy.admin.v3.BootstrapConfigDump",
-   "bootstrap": {
-    "node": {
-     "id": "sidecar~10.128.2.23~back-golang-v1-&lt;pod_id&gt;.&lt;user_namespace&gt;~&lt;user_namespace&gt;.svc.cluster.local",
-...</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Finally, compare both files differences and draw a definitive conclusion:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">diff back-golang-v1-&lt;pod_id&gt;-envoy-filter-orig.json back-golang-v1-&lt;pod_id&gt;-envoy-filter-custom.json</code></pre>
-</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Note that the response is generated by Openshift and not by <em>www.google.es</em>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
