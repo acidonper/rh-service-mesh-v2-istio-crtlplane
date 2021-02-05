@@ -94,10 +94,13 @@
     <a class="nav-link" href="02-jumpapp.html#github">2.2 Clone GitHub Repository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="02-jumpapp.html#jumpappobjects">2.3 Create Jump App Objects in Openshift by Helm</a>
+    <a class="nav-link" href="02-jumpapp.html#jumpappobjects">2.3 Create Jump App Objects in Openshift</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="02-jumpapp.html#test">2.4 Confirm Jump App is already running in Openshift</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-jumpapp.html#testapp">2.5 Access to Jump App</a>
   </li>
 </ul>
   </li>
@@ -115,13 +118,16 @@
     <a class="nav-link" href="#dr">3.3 Destination Rules</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#annotation">3.4 Add Istio Sidecar annotation in Jump App deployments</a>
+    <a class="nav-link" href="#services">3.4 K8s Services</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#routes">3.5 Configure Routes</a>
+    <a class="nav-link" href="#annotation">3.5 Add Istio Sidecar annotation in Jump App deployments</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#test">3.6 Confirm Jump App is running again</a>
+    <a class="nav-link" href="#routes">3.6 Configure Routes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#test">3.7 Confirm Jump App is running again</a>
   </li>
 </ul>
   </li>
@@ -208,6 +214,12 @@ Let your instructor know that you are at this point
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>XXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXX
+XXXXXXXXXXXXXXXXXXXXXXXX</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -232,50 +244,29 @@ Let your instructor know that you are at this point
 <div class="paragraph">
 <p>In this step, you have to be able to deploy this <em>Jump App</em> Service Mesh objects in order to introduce this application in the Service Mesh and publish it to external clients.</p>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Please, replace <strong>&lt;user_namespace&gt;</strong> with the value provided by the Instructor at the beginning of this tutorial.
+</td>
+</tr>
+</table>
+</div>
 <div class="sect2">
 <h3 id="gw"><a class="anchor" href="#gw"></a>Gateways</h3>
 <div class="paragraph">
 <p>First at all, it is required to create a Gateway for external access. In the <em>Jump App</em> architecture, you have a couple of services which have to be exposes to external clients in order to present the Frontend and Backend services.</p>
 </div>
 <div class="paragraph">
-<p>Please, create a new file named <strong>gateways.yml</strong> with the following content replacing <strong>&lt;user_namespace&gt;</strong> and <strong>&lt;openshift_apps_domain&gt;</strong> with the valuess provided by the Instructor at the beginning of this tutorial.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: back-golang
-spec:
-  selector:
-    istio: ingressgateway
-  servers:
-    - port:
-        number: 80
-        name: http
-        protocol: HTTP
-      hosts:
-      - back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;
----
-apiVersion: networking.istio.io/v1alpha3
-kind: Gateway
-metadata:
-  name: front-javascript
-spec:
-  selector:
-    istio: ingressgateway
-  servers:
-    - port:
-        number: 80
-        name: http
-        protocol: HTTP
-      hosts:
-      - front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;</code></pre>
-</div>
+<p>Please, return to git repository and create <strong>gateways</strong> through the respective Openshift template executing the following command:</p>
 </div>
 <div class="listingblock lines_space console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f gateways.yml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 03-jump-app-flows/00-jump-app-gws.yaml --param-file=params.env --ignore-unknown-parameters | oc create -f -</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -291,91 +282,11 @@ gateway.networking.istio.io/front-javascript created</code></pre>
 <p>Once gateways are created and the application is reacheabled, it is time to create the traffic rules inside your namespace in order to route this traffic to the specific endpoint.</p>
 </div>
 <div class="paragraph">
-<p>Please, create a new file named <strong>virtualservices.yml</strong> with the following content replacing <strong>&lt;user_namespace&gt;</strong> and <strong>&lt;openshift_apps_domain&gt;</strong> with the valuess provided by the Instructor at the beginning of this tutorial.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: back-golang
-spec:
-  gateways:
-  - back-golang
-  - mesh
-  hosts:
-  - back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;
-  - back-golang.&lt;user_namespace&gt;.svc.cluster.local
-  - back-golang
-  http:
-  - route:
-      - destination:
-          host: back-golang.&lt;user_namespace&gt;.svc.cluster.local
-          subset: v1
-        weight: 100
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: back-python
-spec:
-  gateways:
-  - back-python
-  - mesh
-  hosts:
-  - back-python-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;
-  - back-python.&lt;user_namespace&gt;.svc.cluster.local
-  - back-python
-  http:
-  - route:
-      - destination:
-          host: back-python.&lt;user_namespace&gt;.svc.cluster.local
-          subset: v1
-        weight: 100
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: back-springboot
-spec:
-  gateways:
-  - back-springboot
-  - mesh
-  hosts:
-  - back-springboot-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;
-  - back-springboot.&lt;user_namespace&gt;.svc.cluster.local
-  - back-springboot
-  http:
-  - route:
-      - destination:
-          host: back-springboot.&lt;user_namespace&gt;.svc.cluster.local
-          subset: v1
-        weight: 100
----
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: front-javascript
-spec:
-  gateways:
-  - front-javascript
-  - mesh
-  hosts:
-  - front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;
-  - front-javascript.&lt;user_namespace&gt;.svc.cluster.local
-  - front-javascript
-  http:
-  - route:
-      - destination:
-          host: front-javascript.&lt;user_namespace&gt;.svc.cluster.local
-          subset: v1
-        weight: 100</code></pre>
-</div>
+<p>Please, create <strong>virtual services</strong> through the respective Openshift template executing the following command:</p>
 </div>
 <div class="listingblock lines_space console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f virtualservices.yml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 03-jump-app-flows/01-jump-app-vss.yaml --param-file=params.env --ignore-unknown-parameters | oc create -f -</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -393,97 +304,59 @@ virtualservice.networking.istio.io/front-javascript created</code></pre>
 <p>Once previous objects are created, it is required  to define the policies which will be applied to traffic intended for a service after routing has occurred.</p>
 </div>
 <div class="paragraph">
-<p>Please, create a new file named <strong>destinationrules.yml</strong> with the following content replacing <strong>&lt;user_namespace&gt;</strong> with the values provided by the Instructor at the beginning of this tutorial.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: back-golang
-spec:
-  host: back-golang.&lt;user_namespace&gt;.cluster.local
-  subsets:
-  - name: v1
-    labels:
-      version: v1
----
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: back-python
-spec:
-  host: back-python.&lt;user_namespace&gt;.cluster.local
-  subsets:
-  - name: v1
-    labels:
-      version: v1
----
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: back-springboot
-spec:
-  host: back-springboot.&lt;user_namespace&gt;.cluster.local
-  subsets:
-  - name: v1
-    labels:
-      version: v1
----
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: front-javascript
-spec:
-  host: front-javascript.&lt;user_namespace&gt;.cluster.local
-  subsets:
-  - name: v1
-    labels:
-      version: v1</code></pre>
-</div>
+<p>Please, create <strong>destination rules</strong> through the respective Openshift template executing the following command:</p>
 </div>
 <div class="listingblock lines_space console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f destinationrules.yml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 03-jump-app-flows/02-jump-app-drs.yaml --param-file=params.env --ignore-unknown-parameters | oc create -f -</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">virtualservice.networking.istio.io/back-golang created
-virtualservice.networking.istio.io/back-python created
-virtualservice.networking.istio.io/back-springboot created
-virtualservice.networking.istio.io/front-javascript created</code></pre>
+<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">destinationrule.networking.istio.io/back-golang created
+destinationrule.networking.istio.io/back-python created
+destinationrule.networking.istio.io/back-springboot created
+destinationrule.networking.istio.io/front-javascript created</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="services"><a class="anchor" href="#services"></a>K8s Services</h3>
+<div class="paragraph">
+<p>Once you have created gateways, virtual services and destination rules, it is time to include a specific annotation in your app deployments in order to allow Service Mesh control and run the respective envoy sidecar automatically.</p>
+</div>
+<div class="paragraph">
+<p>Please, create <strong>k8s services</strong> through the respective Openshift template executing the following command:</p>
+</div>
+<div class="listingblock lines_space console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 03-jump-app-flows/03-jump-app-services.yaml --param-file=params.env --ignore-unknown-parameters | oc create -f -</code></pre>
+</div>
+</div>
+<div class="listingblock console-output">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">service/back-golang created
+service/back-python created
+service/back-springboot created
+service/front-javascript created</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="annotation"><a class="anchor" href="#annotation"></a>Add <em>Istio Sidecar</em> annotation in <em>Jump App</em> deployments</h3>
 <div class="paragraph">
-<p>Finally, it is time to include a specific annotation in your app deployments in order to be Service Mesh will able to run envoy sidecar automatically.</p>
+<p>Finally, it is time to include a specific annotation in your app deployments in order to allow Service Mesh control and run the respective envoy sidecar automatically.</p>
 </div>
 <div class="paragraph">
-<p>Please, edit each <em>Jump App Microservice</em> deployment including the annotation added below:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">...
-spec:
-...
-  template:
-    metadata:
-      annotations:
-        sidecar.istio.io/inject: "true"
-...</code></pre>
-</div>
+<p>Please, edit each <em>Jump App Microservice</em> deployment executing the commands added below:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc edit deployment front-javascript-v1 -n &lt;user_namespace&gt;
-oc edit deployment back-springboot-v1 -n &lt;user_namespace&gt;
-oc edit deployment back-python-v1 -n &lt;user_namespace&gt;
-oc edit deployment back-golang-v1 -n &lt;user_namespace&gt;
-oc edit deployment mongodb -n &lt;user_namespace&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc patch deployment front-javascript-v1 -p '{"spec":{"template":{"metadata":{"annotations":{"sidecar.istio.io/inject":"true"}}}}}' -n &lt;user_namespace&gt;
+oc patch deployment back-springboot-v1 -p '{"spec":{"template":{"metadata":{"annotations":{"sidecar.istio.io/inject":"true"}}}}}' -n &lt;user_namespace&gt;
+oc patch deployment back-python-v1 -p '{"spec":{"template":{"metadata":{"annotations":{"sidecar.istio.io/inject":"true"}}}}}' -n &lt;user_namespace&gt;
+oc patch deployment back-golang-v1 -p '{"spec":{"template":{"metadata":{"annotations":{"sidecar.istio.io/inject":"true"}}}}}' -n &lt;user_namespace&gt;
+oc patch deployment mongo -p '{"spec":{"template":{"metadata":{"annotations":{"sidecar.istio.io/inject":"true"}}}}}' -n &lt;user_namespace&gt;</code></pre>
 </div>
 </div>
 </div>
@@ -493,7 +366,7 @@ oc edit deployment mongodb -n &lt;user_namespace&gt;</code></pre>
 <p>An OpenShift Container Platform <strong>route</strong> exposes a service at a host name, such as www.example.com, so that external clients can reach it by name. When you manage routes outside Service Mesh, it is required to create these objects in each namespace.</p>
 </div>
 <div class="paragraph">
-<p>Once you have a project integrated in Service Mesh, routes should be created in istio-system in order to making this external service available through the Istio Ingress Gateway. For this reason, it is required to follow next steps:</p>
+<p>Once you have a project integrated in Service Mesh, routes should be created in istio-system, or wherever the control plane is installed, to make this external service available through the Istio Ingress Gateway. For this reason, it is required to follow next steps:</p>
 </div>
 <div class="sect3">
 <h4 id="_delete_all_current_routes_in_user_namespace"><a class="anchor" href="#_delete_all_current_routes_in_user_namespace"></a><strong>Delete all current routes in &lt;user_namespace&gt;</strong></h4>
@@ -514,53 +387,22 @@ route.route.openshift.io/back-javascript deleted</code></pre>
 <div class="sect3">
 <h4 id="_create_a_new_routes_in_istio_system"><a class="anchor" href="#_create_a_new_routes_in_istio_system"></a><strong>Create a new routes in istio-system</strong></h4>
 <div class="paragraph">
-<p>Please, create a new file named <strong>routes.yml</strong> with the following content replacing <strong>&lt;user_namespace&gt;</strong> and <strong>&lt;openshift_apps_domain&gt;</strong> with the valuess provided by the Instructor at the beginning of this tutorial.</p>
+<p>Once "regular" routes are deleted, it is required to create the new ones.</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
-apiVersion: route.openshift.io/v1
-kind: Route
-metadata:
-  name: back-golang-jump-app-dev
-  namespace: istio-system
-spec:
-  host: back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;
-  to:
-    kind: Service
-    name: istio-ingressgateway
-  tls:
-    termination: edge
-    insecureEdgeTerminationPolicy: Redirect
-  port:
-    targetPort: http2
----
-apiVersion: route.openshift.io/v1
-kind: Route
-metadata:
-  name: front-javascript-jump-app-dev
-  namespace: istio-system
-spec:
-  host: front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;
-  to:
-    kind: Service
-    name: istio-ingressgateway
-  tls:
-    termination: edge
-    insecureEdgeTerminationPolicy: Redirect
-  port:
-    targetPort: http2</code></pre>
-</div>
+<div class="paragraph">
+<p>Please, create <strong>routes</strong> through the respective Openshift template executing the following command:</p>
 </div>
 <div class="listingblock lines_space console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f routes.yml</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 03-jump-app-flows/04-jump-app-routes.yaml --param-file=params.env --ignore-unknown-parameters | oc create -f -</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">route.route.openshift.io/back-golang-jump-app-dev created
-route.route.openshift.io/front-javascript-jump-app-dev created</code></pre>
+<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">route.route.openshift.io/back-golang-&lt;user_namespace&gt; created
+route.route.openshift.io/back-golang-v1-&lt;user_namespace&gt; created
+route.route.openshift.io/front-javascript-&lt;user_namespace&gt; created
+route.route.openshift.io/front-javascript-v1-&lt;user_namespace&gt; created</code></pre>
 </div>
 </div>
 </div>
@@ -591,14 +433,13 @@ Look at the number of containers in each microservice, it must contains 2 contai
 </div>
 <div class="listingblock lines_7 console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc get pods</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get pods</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">NAME                                   READY   STATUS    RESTARTS   AGE
 back-golang-v1-7fb9ff7bdc-mwp8b        2/2     Running   0          1m
-back-golang-v2-213fhfd23d-23ass        2/2     Running   0          1m
 back-python-v1-74c65d94b5-9hzxd        2/2     Running   0          1m
 back-springboot-v1-74db6bb8b4-pw74s    2/2     Running   0          1m
 front-javascript-v1-7b6d4fb65c-9fdfb   2/2     Running   0          1m
@@ -614,19 +455,21 @@ mongo-7c8f67cc4b-t9dnf                 2/2     Running   0          1m</code></p
 </div>
 <div class="listingblock lines_7 console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc get routes -n istio-system | grep &lt;user_namespace&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get routes -n istio-system | grep &lt;user_namespace&gt;</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">back-golang-&lt;user_namespace&gt;        back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;         istio-ingressgateway   http2   edge/Redirect        None
-front-javascript-&lt;user_namespace&gt;   front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;    istio-ingressgateway   http2   edge/Redirect        None</code></pre>
+back-golang-v1-&lt;user_namespace&gt;        back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;         istio-ingressgateway   http2   edge/Redirect        None
+front-javascript-&lt;user_namespace&gt;   front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;    istio-ingressgateway   http2   edge/Redirect        None
+front-javascript-v1-&lt;user_namespace&gt;   front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;    istio-ingressgateway   http2   edge/Redirect        None</code></pre>
 </div>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Visit the <strong>back</strong>, <em>back-golang-&lt;user_namespace&gt;</em>, route via your web browser</p>
+<p>Visit the <strong>back</strong>, <em>back-golang-&lt;user_namespace&gt;</em> and  <em>back-golang-v1-&lt;user_namespace&gt;</em>, routes via your web browser</p>
 </li>
 <li>
 <p>Visit the <strong>front</strong>, <em>front-javascript-golang-&lt;user_namespace&gt;</em>, route via your web browser. In addition, configure <strong>1</strong> retries with <strong>1</strong> interval and  push <strong>- JUMP-</strong> button and ensure the following message is displaying in your screen</p>
@@ -657,7 +500,7 @@ It is required to accept <strong>self-signed certificates</strong> provided by O
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Alternatively, you are able to review the Service Mesh traffic flow by Kiali console visiting &lt;kiali_url&gt;
+Alternatively, you are able to review the Service Mesh traffic flow by Kiali console visiting <strong>&lt;kiali_url&gt;</strong>
 </td>
 </tr>
 </table>

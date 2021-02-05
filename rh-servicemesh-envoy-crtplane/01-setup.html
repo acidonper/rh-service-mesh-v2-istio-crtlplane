@@ -94,10 +94,13 @@
     <a class="nav-link" href="02-jumpapp.html#github">2.2 Clone GitHub Repository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="02-jumpapp.html#jumpappobjects">2.3 Create Jump App Objects in Openshift by Helm</a>
+    <a class="nav-link" href="02-jumpapp.html#jumpappobjects">2.3 Create Jump App Objects in Openshift</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="02-jumpapp.html#test">2.4 Confirm Jump App is already running in Openshift</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-jumpapp.html#testapp">2.5 Access to Jump App</a>
   </li>
 </ul>
   </li>
@@ -115,13 +118,16 @@
     <a class="nav-link" href="03-flows.html#dr">3.3 Destination Rules</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#annotation">3.4 Add Istio Sidecar annotation in Jump App deployments</a>
+    <a class="nav-link" href="03-flows.html#services">3.4 K8s Services</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#routes">3.5 Configure Routes</a>
+    <a class="nav-link" href="03-flows.html#annotation">3.5 Add Istio Sidecar annotation in Jump App deployments</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#test">3.6 Confirm Jump App is running again</a>
+    <a class="nav-link" href="03-flows.html#routes">3.6 Configure Routes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-flows.html#test">3.7 Confirm Jump App is running again</a>
   </li>
 </ul>
   </li>
@@ -228,12 +234,6 @@
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://git-scm.com/download/mac">Download</a></p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://git-scm.com/download/win">Download</a></p></td>
 </tr>
-<tr>
-<td class="tableblock halign-center valign-top"><p class="tableblock">helm</p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://get.helm.sh/helm-v3.5.1-linux-amd64.tar.gz">Download</a></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://get.helm.sh/helm-v3.5.1-darwin-amd64.tar.gz">Download</a></p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://get.helm.sh/helm-v3.5.1-windows-amd64.zip">Download</a></p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -242,7 +242,7 @@
 <h2 id="laboratory"><a class="anchor" href="#laboratory"></a>Laboratory</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Tutorial&#8217;s laboratory is based on a set of technologies and resources which will allow you to understand what Red Hat Service Mesh, Istio Control Plane and Envoy roles are:</p>
+<p>Tutorial&#8217;s laboratory is based on a set of technologies and resources:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -253,41 +253,81 @@
 <p>Red Hat Service Mesh</p>
 </li>
 <li>
-<p>A GitHub Repositories</p>
+<p>A GitHub Repository</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Instructor provides students Openshift credentials at the beginning of this tutorial in order to access the laboratory.</p>
+<p>These resources will allow you to understand what Red Hat Service Mesh, Istio Control Plane and Envoy roles are.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Openshift Cluster URL (E.g. <em><a href="https://console-openshift-console.apps.acidonpe.sandbox507.opentlc.com" class="bare">https://console-openshift-console.apps.acidonpe.sandbox507.opentlc.com</a></em>)</p>
-</li>
-<li>
-<p>Username (E.g. <em>user1</em>)</p>
-</li>
-<li>
-<p>Password (E.g. <em>password</em>)</p>
-</li>
-<li>
-<p>Namespace (E.g. <em>ns_user1</em>)</p>
-</li>
-<li>
-<p>Openshift Apps Domain (E.g. <em>apps.acidonpe.sandbox507.opentlc.com</em>)</p>
-</li>
-<li>
-<p>Kiali Url (E.g. <em><a href="https://kiali-istio-system.apps.acidonpe.sandbox507.opentlc.com" class="bare">https://kiali-istio-system.apps.acidonpe.sandbox507.opentlc.com</a></em>)</p>
-</li>
-</ul>
+<div class="sect2">
+<h3 id="_laboratory_parameters"><a class="anchor" href="#_laboratory_parameters"></a>Laboratory Parameters</h3>
+<div class="paragraph">
+<p>Instructor provides users Openshift credentials and other important parameters at the beginning of this tutorial in order to access the laboratory.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top"><strong>Name</strong></th>
+<th class="tableblock halign-center valign-top"><strong>Reference</strong></th>
+<th class="tableblock halign-center valign-top"><strong>Example</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Openshift Cluster URL</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&lt;ocp_cluster_url&gt;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><em><a href="https://api.tutorialrhmesh.sandbox507.opentlc.com" class="bare">https://api.tutorialrhmesh.sandbox507.opentlc.com</a></em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Openshift Cluster URL</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&lt;ocp_cluster_console&gt;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><em><a href="https://console-openshift-console.apps.tutorialrhmesh.sandbox507.opentlc.com" class="bare">https://console-openshift-console.apps.tutorialrhmesh.sandbox507.opentlc.com</a></em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Username</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&lt;user&gt;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">user1</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Password</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&lt;pass&gt;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">P4ssw0rd</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Namespace</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&lt;user_namespace&gt;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">user1_namespace</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Openshift Apps Domain</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&lt;openshift_apps_domain&gt;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><em>apps.tutorialrhmesh.sandbox507.opentlc.com</em></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Kiali Url</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&lt;kiali_url&gt;</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><em><a href="https://kiali-istio-system.apps.tutorialrhmesh.sandbox507.opentlc.com" class="bare">https://kiali-istio-system.apps.tutorialrhmesh.sandbox507.opentlc.com</a></em></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_access_laboratory_oc_client"><a class="anchor" href="#_access_laboratory_oc_client"></a>Access Laboratory - OC Client</h3>
+<div class="paragraph">
+<p>The OpenShift Container Platform CLI, installed before, exposes commands for managing your applications, as well as lower level tools to interact with each component of your system.</p>
 </div>
 <div class="paragraph">
 <p>Please, review the previous settings with your instructor and connect to the cluster executing next command:</p>
 </div>
 <div class="listingblock lines_space console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc login -u &lt;user&gt; -p &lt;pass&gt; &lt;ocp_cluster_url&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc login -u &lt;user&gt; -p &lt;pass&gt; &lt;ocp_cluster_console&gt;</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -296,11 +336,33 @@
 
 You have access to 65 projects, the list has been suppressed. You can list all projects with 'oc projects'
 
-Using project "default".</code></pre>
+Using project "&lt;user_namespace&gt;".</code></pre>
 </div>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Please, pay special attention to <em>oc</em> because you will need to use this tool several times during this tutorial.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_access_laboratory_console"><a class="anchor" href="#_access_laboratory_console"></a>Access Laboratory - Console</h3>
 <div class="paragraph">
-<p>In addition, access to &lt;ocp_cluster_url&gt; with your credentials via browser in order to access Openshift Console.</p>
+<p>In addition, access Openshift Console using your credentials via browser in order to check connectivity and accessibility to the console:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>&lt;ocp_cluster_console&gt;</p>
+</li>
+</ul>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -313,6 +375,7 @@ Using project "default".</code></pre>
 </td>
 </tr>
 </table>
+</div>
 </div>
 </div>
 </div>

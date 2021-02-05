@@ -94,10 +94,13 @@
     <a class="nav-link" href="#github">2.2 Clone GitHub Repository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#jumpappobjects">2.3 Create Jump App Objects in Openshift by Helm</a>
+    <a class="nav-link" href="#jumpappobjects">2.3 Create Jump App Objects in Openshift</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="#test">2.4 Confirm Jump App is already running in Openshift</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#testapp">2.5 Access to Jump App</a>
   </li>
 </ul>
   </li>
@@ -115,13 +118,16 @@
     <a class="nav-link" href="03-flows.html#dr">3.3 Destination Rules</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#annotation">3.4 Add Istio Sidecar annotation in Jump App deployments</a>
+    <a class="nav-link" href="03-flows.html#services">3.4 K8s Services</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#routes">3.5 Configure Routes</a>
+    <a class="nav-link" href="03-flows.html#annotation">3.5 Add Istio Sidecar annotation in Jump App deployments</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#test">3.6 Confirm Jump App is running again</a>
+    <a class="nav-link" href="03-flows.html#routes">3.6 Configure Routes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-flows.html#test">3.7 Confirm Jump App is running again</a>
   </li>
 </ul>
   </li>
@@ -207,7 +213,7 @@
 <h3 id="login"><a class="anchor" href="#login"></a>Login in Openshift</h3>
 <div class="listingblock lines_space console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc login -u &lt;user&gt; -p &lt;pass&gt; &lt;ocp_cluster_url&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc login -u &lt;user&gt; -p &lt;pass&gt; &lt;ocp_cluster_console&gt;</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -216,7 +222,7 @@
 
 You have access to 65 projects, the list has been suppressed. You can list all projects with 'oc projects'
 
-Using project "default".</code></pre>
+Using project "&lt;user_namespace&gt;".</code></pre>
 </div>
 </div>
 </div>
@@ -230,17 +236,29 @@ Using project "default".</code></pre>
 </div>
 <div class="listingblock lines_space console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone <a href="https://github.com/acidonper/jump-app-gitops.git" class="bare">https://github.com/acidonper/jump-app-gitops.git</a>
-git submodule update --remote</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone <a href="https://github.com/acidonper/rh-service-mesh-v2-istio-crtlplane-resources.git" class="bare">https://github.com/acidonper/rh-service-mesh-v2-istio-crtlplane-resources.git</a></code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="jumpappobjects"><a class="anchor" href="#jumpappobjects"></a>Create <em>Jump App</em> Objects in Openshift by Helm</h3>
+<h3 id="jumpappobjects"><a class="anchor" href="#jumpappobjects"></a>Create <em>Jump App</em> Objects in Openshift</h3>
+<div class="paragraph">
+<p>First at all, it is required to modify <em>params.env</em> file to include the parameters provided by the instructor:</p>
+</div>
+<div class="listingblock lines_7 console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vi params.env
+USER_NAMESPACE="&lt;user_namespace&gt;"
+...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once the params file is saved, you are able to process with <em>Jump App</em> deployment phase:</p>
+</div>
 <div class="listingblock lines_7 console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc project &lt;user_namespace&gt;
-helm template ./charts/jump-app-micros -f examples/local/values-jump-app-dev.yaml --namespace &lt;user_namespace&gt; | oc apply -f - -n &lt;user_namespace&gt;</code></pre>
+oc process -f 00-jump-app-template.yml --param-file=./params.env --ignore-unknown-parameters | oc create -f -</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -278,19 +296,24 @@ route.route.openshift.io/back-javascript created</code></pre>
 </div>
 <div class="listingblock lines_7 console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc get pods</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get pods -n &lt;user_namespace&gt;</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">NAME                                   READY   STATUS    RESTARTS   AGE
 back-golang-v1-7fb9ff7bdc-mwp8b        1/1     Running   0          1m
-back-golang-v2-213fhfd23d-23ass        1/1     Running   0          1m
 back-python-v1-74c65d94b5-9hzxd        1/1     Running   0          1m
 back-springboot-v1-74db6bb8b4-pw74s    1/1     Running   0          1m
 front-javascript-v1-7b6d4fb65c-9fdfb   1/1     Running   0          1m
 mongo-7c8f67cc4b-t9dnf                 1/1     Running   0          1m</code></pre>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="testapp"><a class="anchor" href="#testapp"></a>Access to <em>Jump App</em></h3>
+<div class="paragraph">
+<p>Once <em>Jump App</em> is already running in Openshift, it is time to access <em>Jump App</em> public services in order to test the application:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -301,14 +324,13 @@ mongo-7c8f67cc4b-t9dnf                 1/1     Running   0          1m</code></p
 </div>
 <div class="listingblock lines_7 console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc get routes -n &lt;user_namespace&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get routes -n &lt;user_namespace&gt;</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">back-golang           back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;          &lt;user_namespace&gt;   http2   edge/Redirect        None
 back-golang-v1        back-golang-v1-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;       &lt;user_namespace&gt;   http2   edge/Redirect        None
-back-golang-v2        back-golang-v1-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;       &lt;user_namespace&gt;   http2   edge/Redirect        None
 front-javascript      front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;     &lt;user_namespace&gt;   http2   edge/Redirect        None
 front-javascript-v1   front-javascript-v1-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;  &lt;user_namespace&gt;   http2   edge/Redirect        None</code></pre>
 </div>
@@ -316,7 +338,7 @@ front-javascript-v1   front-javascript-v1-&lt;user_namespace&gt;.&lt;openshift_a
 <div class="ulist">
 <ul>
 <li>
-<p>Visit the <strong>back</strong>, <em>back-golang</em>, route via your web browser</p>
+<p>Visit the <strong>back</strong>, <em>back-golang</em> and <em>back-golang-v1</em>, routes via your web browser</p>
 </li>
 <li>
 <p>Visit the <strong>front</strong>, <em>front-javascript</em>, route via your web browser, push <strong>- JUMP-</strong> button and ensure the following message is displaying in your screen</p>

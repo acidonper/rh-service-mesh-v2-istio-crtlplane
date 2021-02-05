@@ -94,10 +94,13 @@
     <a class="nav-link" href="02-jumpapp.html#github">2.2 Clone GitHub Repository</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="02-jumpapp.html#jumpappobjects">2.3 Create Jump App Objects in Openshift by Helm</a>
+    <a class="nav-link" href="02-jumpapp.html#jumpappobjects">2.3 Create Jump App Objects in Openshift</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="02-jumpapp.html#test">2.4 Confirm Jump App is already running in Openshift</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-jumpapp.html#testapp">2.5 Access to Jump App</a>
   </li>
 </ul>
   </li>
@@ -115,13 +118,16 @@
     <a class="nav-link" href="03-flows.html#dr">3.3 Destination Rules</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#annotation">3.4 Add Istio Sidecar annotation in Jump App deployments</a>
+    <a class="nav-link" href="03-flows.html#services">3.4 K8s Services</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#routes">3.5 Configure Routes</a>
+    <a class="nav-link" href="03-flows.html#annotation">3.5 Add Istio Sidecar annotation in Jump App deployments</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#test">3.6 Confirm Jump App is running again</a>
+    <a class="nav-link" href="03-flows.html#routes">3.6 Configure Routes</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-flows.html#test">3.7 Confirm Jump App is running again</a>
   </li>
 </ul>
   </li>
@@ -222,7 +228,7 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> and <strong>&lt;pod_id&g
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-destination-rule-orig.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-destination-rule-orig.json</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -237,45 +243,20 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> and <strong>&lt;pod_id&g
 ...</code></pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>It is time to added a new <em>Destination Rule</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
-apiVersion: networking.istio.io/v1alpha3
-kind: DestinationRule
-metadata:
-  name: back-golang
-spec:
-  host: back-golang.&lt;user_namespace&gt;.cluster.local
-  subsets:
-    - labels:
-        version: v1
-      name: v1
-    - labels:
-        version: v2
-      name: v2</code></pre>
-</div>
-</div>
 <div class="paragraph">
-<p>Apply this object through _oc_client:</p>
+<p>It is time to modify a <em>Destination Rule</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
 </div>
 <div class="listingblock lines_space console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f destination-rule-orig.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 04-istio-envoy-relationship/00-istio-envoy-rel-drs.yaml --param-file=params.env --ignore-unknown-parameters | oc apply -f -</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Once this new <em>Destination Rule</em> has been created, save the custom Envoy proxy configuration following next steps:</p>
+<p>Once this new <em>Destination Rule</em> has been modified, save the custom Envoy proxy configuration following next steps:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-destination-rule-custom.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-destination-rule-custom.json</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -295,7 +276,7 @@ spec:
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">diff back-golang-v1-&lt;pod_id&gt;-destination-rule-orig.json back-golang-v1-&lt;pod_id&gt;-destination-rule-custom.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">diff back-golang-v1-&lt;pod_id&gt;-destination-rule-orig.json back-golang-v1-&lt;pod_id&gt;-destination-rule-custom.json</code></pre>
 </div>
 </div>
 </div>
@@ -306,7 +287,7 @@ spec:
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-virtual-service-orig.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-virtual-service-orig.json</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -321,59 +302,20 @@ spec:
 ...</code></pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>It is time to added a new <em>Virtual Service</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
-apiVersion: networking.istio.io/v1alpha3
-kind: VirtualService
-metadata:
-  name: back-golang
-spec:
-  gateways:
-  - back-golang
-  - mesh
-  hosts:
-  - back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;
-  - back-golang.&lt;user_namespace&gt;.svc.cluster.local
-  - back-golang
-  http:
-  - route:
-      - destination:
-          host: back-golang.&lt;user_namespace&gt;.svc.cluster.local
-          subset: v1
-        weight: 100
-    match:
-      - uri:
-          prefix: /.*
-    rewrite:
-      uri: "/jump"
-    headers:
-      response:
-        set:
-          Redirection: istio-envoy-relationship-test</code></pre>
-</div>
-</div>
 <div class="paragraph">
-<p>Apply this object through _oc_client:</p>
+<p>It is time to modify a <em>Virtual Service</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
 </div>
 <div class="listingblock lines_space console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f virtual-service-orig.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 04-istio-envoy-relationship/01-istio-envoy-rel-vss.yaml --param-file=params.env --ignore-unknown-parameters | oc apply -f -</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Once this new <em>Virtual Service</em> has been created, save the custom Envoy proxy configuration following next steps:</p>
+<p>Once this new <em>Virtual Service</em> has been modified, save the custom Envoy proxy configuration following next steps:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-virtual-service-custom.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-virtual-service-custom.json</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -393,7 +335,7 @@ spec:
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">diff back-golang-v1-&lt;pod_id&gt;-virtual-service-orig.json back-golang-v1-&lt;pod_id&gt;-virtual-service-custom.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">diff back-golang-v1-&lt;pod_id&gt;-virtual-service-orig.json back-golang-v1-&lt;pod_id&gt;-virtual-service-custom.json</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -410,13 +352,13 @@ Additionally, perform a GET request using <em>curl</em> in order to test out hea
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">curl -k -v <a href="https://back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;/testing" class="bare">https://back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;/testing</a></code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">curl -k -v <a href="https://back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;/testing" class="bare">https://back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;/testing</a></code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">...
-&lt; redirection: test-to-jump
+&lt; redirection: istio-envoy-relationship-test
 ...
 {"code":200,"message":"/jump - Greetings from Golang!"}%</code></pre>
 </div>
@@ -433,14 +375,13 @@ Additionally, perform a GET request using <em>curl</em> in order to test out hea
 </div>
 <div class="listingblock lines_7 console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc get pods</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get pods</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">NAME                                   READY   STATUS    RESTARTS   AGE
 back-golang-v1-7fb9ff7bdc-mwp8b        2/2     Running   0          1m
-back-golang-v2-213fhfd23d-23ass        2/2     Running   0          1m
 back-python-v1-74c65d94b5-9hzxd        2/2     Running   0          1m
 back-springboot-v1-74db6bb8b4-pw74s    2/2     Running   0          1m
 front-javascript-v1-7b6d4fb65c-9fdfb   2/2     Running   0          1m
@@ -456,19 +397,21 @@ mongo-7c8f67cc4b-t9dnf                 2/2     Running   0          1m</code></p
 </div>
 <div class="listingblock lines_7 console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc get routes -n istio-system | grep &lt;user_namespace&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get routes -n istio-system | grep &lt;user_namespace&gt;</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">back-golang-&lt;user_namespace&gt;        back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;         istio-ingressgateway   http2   edge/Redirect        None
-front-javascript-&lt;user_namespace&gt;   front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;    istio-ingressgateway   http2   edge/Redirect        None</code></pre>
+back-golang-v1-&lt;user_namespace&gt;        back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;         istio-ingressgateway   http2   edge/Redirect        None
+front-javascript-&lt;user_namespace&gt;   front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;    istio-ingressgateway   http2   edge/Redirect        None
+front-javascript-v1-&lt;user_namespace&gt;   front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;    istio-ingressgateway   http2   edge/Redirect        None</code></pre>
 </div>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Visit the <strong>back</strong>, <em>back-golang-&lt;user_namespace&gt;</em>, route via your web browser</p>
+<p>Visit the <strong>back</strong>, <em>back-golang-&lt;user_namespace&gt;</em> and  <em>back-golang-v1-&lt;user_namespace&gt;</em>, routes via your web browser</p>
 </li>
 <li>
 <p>Visit the <strong>front</strong>, <em>front-javascript-golang-&lt;user_namespace&gt;</em>, route via your web browser. In addition, configure <strong>1000</strong> retries with <strong>1</strong> interval and  push <strong>- JUMP-</strong> button and ensure the following message is displaying in your screen</p>
@@ -499,7 +442,7 @@ It is required to accept <strong>self-signed certificates</strong> provided by O
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Alternatively, you are able to review the Service Mesh traffic flow by Kiali console visiting &lt;kiali_url&gt;
+Alternatively, you are able to review the Service Mesh traffic flow by Kiali console visiting <strong>&lt;kiali_url&gt;</strong>
 </td>
 </tr>
 </table>
@@ -512,7 +455,7 @@ Alternatively, you are able to review the Service Mesh traffic flow by Kiali con
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-service-entry-orig.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-service-entry-orig.json</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -527,49 +470,20 @@ Alternatively, you are able to review the Service Mesh traffic flow by Kiali con
 ...</code></pre>
 </div>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>It is time to added a new <em>Service Entry</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">---
-apiVersion: networking.istio.io/v1beta1
-kind: ServiceEntry
-metadata:
-  name: external-svc-dns
-spec:
-  hosts:
-  - www.google.es
-  location: MESH_EXTERNAL
-  ports:
-  - number: 443
-    name: https
-    protocol: HTTPS
-  resolution: DNS
-  endpoints:
-  - address: front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;
-    ports:
-      https: 443</code></pre>
-</div>
-</div>
 <div class="paragraph">
-<p>Apply this object through _oc_client:</p>
+<p>It is time to modify a <em>Service Entry</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
 </div>
 <div class="listingblock lines_space console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc apply -f service-entry-orig.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 04-istio-envoy-relationship/02-istio-envoy-rel-ses.yaml --param-file=params.env --ignore-unknown-parameters | oc apply -f -</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Once this new <em>Service Entry</em> has been created, save the custom Envoy proxy configuration following next steps:</p>
+<p>Once this new <em>Service Entry</em> has been modified, save the custom Envoy proxy configuration following next steps:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-service-entry-custom.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-service-entry-custom.json</code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
@@ -589,13 +503,13 @@ spec:
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">diff back-golang-v1-&lt;pod_id&gt;-service-entry-orig.json back-golang-v1-&lt;pod_id&gt;-service-entry-custom.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">diff back-golang-v1-&lt;pod_id&gt;-service-entry-orig.json back-golang-v1-&lt;pod_id&gt;-service-entry-custom.json</code></pre>
 </div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">oc rsh back-golang-v1-&lt;pod_id&gt;
-$ curl -k -v <a href="https://www.google.es" class="bare">https://www.google.es</a></code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc rsh back-golang-v1-&lt;pod_id&gt;
+curl -k -v <a href="https://www.google.es" class="bare">https://www.google.es</a></code></pre>
 </div>
 </div>
 <div class="listingblock console-output">
