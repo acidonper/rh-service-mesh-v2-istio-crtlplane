@@ -255,10 +255,50 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> with the value provided 
 </table>
 </div>
 <div class="sect2">
-<h3 id="ef"><a class="anchor" href="#ef"></a>Envoy Filters</h3>
+<h3 id="ef"><a class="anchor" href="#ef"></a>Envoy Filter</h3>
 <div class="paragraph">
-<p>XXXXXXXXXXXXx
-XXXXXXXXXXXXx</p>
+<p>Before applying changes, please save the original Envoy proxy configuration following next steps:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec &lt;back-golang-pod_id&gt;&lt;back-golang-pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; envoy-filter-config-init.json</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-ef-golang.png" alt="jump app ef golang">
+</div>
+<div class="title">Figure 1. Envoy Configuration</div>
+</div>
+<div class="paragraph">
+<p>It is time to modify a <em>Envoy Filter</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
+</div>
+<div class="listingblock lines_space console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 05-envoy-proxy/00-istio-envoy-rel-ef.yaml --param-file=params.env --ignore-unknown-parameters | oc apply -f -</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-ef-new.png" alt="jump app ef new">
+</div>
+<div class="title">Figure 2. Modifed <em>Envoy Filter</em> Configuration</div>
+</div>
+<div class="paragraph">
+<p>Once this new <em>Envoy Filter</em> has been modified, save the custom Envoy proxy configuration following next steps:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec &lt;back-golang-pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; envoy-filter-config-custom.json</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Finally, compare both files differences and draw a definitive conclusion:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-ef-compare.png" alt="jump app ef compare">
+</div>
 </div>
 <div class="admonitionblock note">
 <table>
