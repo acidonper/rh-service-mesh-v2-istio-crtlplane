@@ -204,14 +204,15 @@
 <h2 id="prerequisites"><a class="anchor" href="#prerequisites"></a>Prerequisites</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The following CLI tools are necessary for running the exercises in this tutorial.</p>
+<p>During this tutorial, it will be required to work with different tools for running the exercises included. Please, install the following software:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
-<col style="width: 25%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
 </colgroup>
 <thead>
 <tr>
@@ -219,6 +220,7 @@
 <th class="tableblock halign-center valign-top"><strong>Fedora</strong></th>
 <th class="tableblock halign-center valign-top"><strong>macOS</strong></th>
 <th class="tableblock halign-center valign-top"><strong>windows</strong></th>
+<th class="tableblock halign-center valign-top"><strong>Official Documentation</strong></th>
 </tr>
 </thead>
 <tbody>
@@ -227,12 +229,21 @@
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-linux.tar.gz">Download</a></p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-mac.tar.gz">Download</a></p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://mirror.openshift.com/pub/openshift-v4/clients/ocp/latest/openshift-client-windows.zip">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://docs.openshift.com/container-platform/4.6/cli_reference/openshift_cli/getting-started-cli.html">OpenShift CLI - Docs</a></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">git</p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://git-scm.com/download/linux">Download</a></p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://git-scm.com/download/mac">Download</a></p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://git-scm.com/download/win">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://git-scm.com">Git - Docs</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Visual Studio Code</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://code.visualstudio.com/sha/download?build=stable&amp;os=linux-rpm-x64">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://code.visualstudio.com/sha/download?build=stable&amp;os=darwin">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://code.visualstudio.com/sha/download?build=stable&amp;os=win32-user">Download</a></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><a href="https://code.visualstudio.com/">Visual Studio Code - Docs</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -242,28 +253,31 @@
 <h2 id="laboratory"><a class="anchor" href="#laboratory"></a>Laboratory</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Tutorial&#8217;s laboratory is based on a set of technologies and resources:</p>
+<p>Tutorial&#8217;s laboratory is basically based on the following technologies:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Red Hat Openshift Container Platform</p>
+<p>Red Hat Openshift Container Platform Cluster</p>
 </li>
 <li>
-<p>Red Hat Service Mesh</p>
-</li>
-<li>
-<p>A GitHub Repository</p>
+<p>Red Hat Service Mesh based on <em>Istio</em> &amp; <em>Envoy</em></p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>These resources will allow you to understand what Red Hat Service Mesh, Istio Control Plane and Envoy roles are.</p>
+<p>In addition, a GitHub repository is provided with a set of templates and other resources which are required to create different objects in Openshift during this tutorial.</p>
+</div>
+<div class="paragraph">
+<p>The previous technologies and resources will allow you to implement a microservice-based application in Openshift which will be included in Service Mesh. The main objective of deploying this application in Openshift using Service Mesh is to understand how <em>Istio</em> &amp; <em>Envoy</em> are tightly related.</p>
 </div>
 <div class="sect2">
 <h3 id="_laboratory_parameters"><a class="anchor" href="#_laboratory_parameters"></a>Laboratory Parameters</h3>
 <div class="paragraph">
-<p>Instructor provides users Openshift credentials and other important parameters at the beginning of this tutorial in order to access the laboratory.</p>
+<p>The Instructor provides users the Openshift credentials and other important parameters at the beginning of this tutorial in order to access the laboratory.</p>
+</div>
+<div class="paragraph">
+<p>The following table includes the parameters that the Instructor should provide you at the beginning:</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -302,7 +316,7 @@
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">Namespace</p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock">&lt;user_namespace&gt;</p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock">user1_namespace</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">user1-namespace</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">Openshift Apps Domain</p></td>
@@ -323,7 +337,7 @@
 <p>The OpenShift Container Platform CLI, installed before, exposes commands for managing your applications, as well as lower level tools to interact with each component of your system.</p>
 </div>
 <div class="paragraph">
-<p>Please, review the previous settings with your instructor and connect to the cluster executing next command:</p>
+<p>Please, review the previous settings with your Instructor and connect to the cluster executing next command from your terminal:</p>
 </div>
 <div class="listingblock lines_space console-input">
 <div class="content">
@@ -339,14 +353,14 @@ You have access to 2 projects, the list has been suppressed. You can list all pr
 Using project "&lt;user_namespace&gt;".</code></pre>
 </div>
 </div>
-<div class="admonitionblock note">
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Please, pay special attention to <em>oc</em> because you will need to use this tool several times during this tutorial.
+Please, pay special attention to <em>oc CLI</em>  because you will need to use this tool several times during this tutorial.
 </td>
 </tr>
 </table>
@@ -360,21 +374,15 @@ Please, pay special attention to <em>oc</em> because you will need to use this t
 <div class="ulist">
 <ul>
 <li>
-<p>&lt;ocp_cluster_console&gt;</p>
+<p>&lt;ocp_cluster_console&gt; (<em>E.g. <a href="https://console-openshift-console.apps.tutorialrhmesh.sandbox507.opentlc.com" class="bare">https://console-openshift-console.apps.tutorialrhmesh.sandbox507.opentlc.com</a></em>)</p>
 </li>
 </ul>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<em>Red Hat Online Partner Enablement Network</em> is the laboratory platform which allows running this tutorial.
-</td>
-</tr>
-</table>
+<div class="imageblock">
+<div class="content">
+<img src="_images/ocp_console.png" alt="ocp console">
+</div>
+<div class="title">Figure 1. Openshift Console</div>
 </div>
 </div>
 </div>

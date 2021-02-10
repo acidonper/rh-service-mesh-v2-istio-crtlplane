@@ -209,14 +209,14 @@
 <div class="paragraph">
 <p>First at all, it is required to deploy Jump App application in Openshift in order to have the demo application environment ready. The following steps in this section helps you to deploy <em>Jump App</em>.</p>
 </div>
-<div class="admonitionblock note">
+<div class="admonitionblock warning">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Please, replace <strong>&lt;user_namespace&gt;</strong> with the value provided by the Instructor at the beginning of this tutorial or values obtained from openshift cluster.
+Please, replace <strong>&lt;user&gt;</strong>, <strong>&lt;pass&gt;</strong>, <strong>&lt;ocp_cluster_console&gt;</strong> and <strong>&lt;user_namespace&gt;</strong> with the values provided by the Instructor at the beginning of this tutorial or values obtained from openshift cluster.
 </td>
 </tr>
 </table>
@@ -251,17 +251,31 @@ Using project "&lt;user_namespace&gt;".</code></pre>
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone <a href="https://github.com/acidonper/rh-service-mesh-v2-istio-crtlplane-resources.git" class="bare">https://github.com/acidonper/rh-service-mesh-v2-istio-crtlplane-resources.git</a></code></pre>
 </div>
 </div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/git_clone_output.png" alt="git clone output">
+</div>
+<div class="title">Figure 1. git clone output</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="jumpappobjects"><a class="anchor" href="#jumpappobjects"></a>Create <em>Jump App</em> Objects in Openshift</h3>
 <div class="paragraph">
-<p>First at all, it is required to modify <em>params.env</em> file to include the parameters provided by the instructor:</p>
+<p>First at all, it is required to modify <em>params.env</em> file to include the parameters provided by the Instructor:</p>
 </div>
 <div class="listingblock lines_7 console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vi params.env
-USER_NAMESPACE="&lt;user_namespace&gt;"
-...</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd rh-service-mesh-v2-istio-crtlplane-resources
+vi params.env</code></pre>
+</div>
+</div>
+<div class="exampleblock">
+<div class="title">Example 1. params file content</div>
+<div class="content">
+<div class="paragraph">
+<p>USER_NAMESPACE=user1<br>
+OCP_APPS_DOMAIN=apps.tutorialrhmesh.sandbox507.opentlc.com</p>
+</div>
 </div>
 </div>
 <div class="paragraph">

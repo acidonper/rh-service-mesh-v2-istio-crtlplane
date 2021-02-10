@@ -209,11 +209,11 @@
 <div class="paragraph">
 <p>In this step, you will review how these objects affect Envoy proxies getting their configuration from Envoy itself.</p>
 </div>
-<div class="admonitionblock note">
+<div class="admonitionblock warning">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
 Please, replace <strong>&lt;user_namespace&gt;</strong> and <strong>&lt;pod_id&gt;</strong> with the values provided by the Instructor at the beginning of this tutorial or values obtained from openshift cluster.
@@ -231,17 +231,11 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> and <strong>&lt;pod_id&g
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-destination-rule-orig.json</code></pre>
 </div>
 </div>
-<div class="listingblock console-output">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">{
- "configs": [
-  {
-   "@type": "type.googleapis.com/envoy.admin.v3.BootstrapConfigDump",
-   "bootstrap": {
-    "node": {
-     "id": "sidecar~10.128.2.23~back-golang-v1-&lt;pod_id&gt;.&lt;user_namespace&gt;~&lt;user_namespace&gt;.svc.cluster.local",
-...</code></pre>
+<img src="_images/envoy_conf.png" alt="envoy conf">
 </div>
+<div class="title">Figure 1. Envoy Configuration</div>
 </div>
 <div class="paragraph">
 <p>It is time to modify a <em>Destination Rule</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
@@ -259,17 +253,11 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> and <strong>&lt;pod_id&g
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-destination-rule-custom.json</code></pre>
 </div>
 </div>
-<div class="listingblock console-output">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">{
- "configs": [
-  {
-   "@type": "type.googleapis.com/envoy.admin.v3.BootstrapConfigDump",
-   "bootstrap": {
-    "node": {
-     "id": "sidecar~10.128.2.23~back-golang-v1-&lt;pod_id&gt;.&lt;user_namespace&gt;~&lt;user_namespace&gt;.svc.cluster.local",
-...</code></pre>
+<img src="_images/envoy_conf.png" alt="envoy conf">
 </div>
+<div class="title">Figure 2. Envoy Configuration</div>
 </div>
 <div class="paragraph">
 <p>Finally, compare both files differences and draw a definitive conclusion:</p>
@@ -290,17 +278,11 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> and <strong>&lt;pod_id&g
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-virtual-service-orig.json</code></pre>
 </div>
 </div>
-<div class="listingblock console-output">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">{
- "configs": [
-  {
-   "@type": "type.googleapis.com/envoy.admin.v3.BootstrapConfigDump",
-   "bootstrap": {
-    "node": {
-     "id": "sidecar~10.128.2.23~back-golang-v1-&lt;pod_id&gt;.&lt;user_namespace&gt;~&lt;user_namespace&gt;.svc.cluster.local",
-...</code></pre>
+<img src="_images/envoy_conf.png" alt="envoy conf">
 </div>
+<div class="title">Figure 3. Envoy Configuration</div>
 </div>
 <div class="paragraph">
 <p>It is time to modify a <em>Virtual Service</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
@@ -318,17 +300,11 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> and <strong>&lt;pod_id&g
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-virtual-service-custom.json</code></pre>
 </div>
 </div>
-<div class="listingblock console-output">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">{
- "configs": [
-  {
-   "@type": "type.googleapis.com/envoy.admin.v3.BootstrapConfigDump",
-   "bootstrap": {
-    "node": {
-     "id": "sidecar~10.128.2.23~back-golang-v1-&lt;pod_id&gt;.&lt;user_namespace&gt;~&lt;user_namespace&gt;.svc.cluster.local",
-...</code></pre>
+<img src="_images/envoy_conf.png" alt="envoy conf">
 </div>
+<div class="title">Figure 4. Envoy Configuration</div>
 </div>
 <div class="paragraph">
 <p>Finally, compare both files differences and draw a definitive conclusion:</p>
@@ -414,7 +390,7 @@ front-javascript-v1-&lt;user_namespace&gt;   front-javascript-&lt;user_namespace
 <p>Visit the <strong>back</strong>, <em>back-golang-&lt;user_namespace&gt;</em> and  <em>back-golang-v1-&lt;user_namespace&gt;</em>, routes via your web browser</p>
 </li>
 <li>
-<p>Visit the <strong>front</strong>, <em>front-javascript-golang-&lt;user_namespace&gt;</em>, route via your web browser. In addition, configure <strong>1000</strong> retries with <strong>1</strong> interval and  push <strong>- JUMP-</strong> button and ensure the following message is displaying in your screen</p>
+<p>Visit the <strong>front</strong>, <em>front-javascript-golang-&lt;user_namespace&gt;</em>, route via your web browser. In addition, configure <strong>[ 1000 ]</strong> retries with <strong>[ 1 ]</strong> interval and press <strong>[ JUMP ]</strong> and ensure the following message is displaying in your screen</p>
 </li>
 </ul>
 </div>
@@ -435,14 +411,14 @@ It is required to accept <strong>self-signed certificates</strong> provided by O
 </tr>
 </table>
 </div>
-<div class="admonitionblock note">
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-Alternatively, you are able to review the Service Mesh traffic flow by Kiali console visiting <strong>&lt;kiali_url&gt;</strong>
+Alternatively, you are able to review the Service Mesh traffic flow by Kiali console visiting <strong>&lt;kiali_url&gt;</strong> (<em>E.g. <a href="https://kiali-istio-system.apps.tutorialrhmesh.sandbox507.opentlc.com" class="bare">https://kiali-istio-system.apps.tutorialrhmesh.sandbox507.opentlc.com</a></em>)
 </td>
 </tr>
 </table>
@@ -458,17 +434,11 @@ Alternatively, you are able to review the Service Mesh traffic flow by Kiali con
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-service-entry-orig.json</code></pre>
 </div>
 </div>
-<div class="listingblock console-output">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">{
- "configs": [
-  {
-   "@type": "type.googleapis.com/envoy.admin.v3.BootstrapConfigDump",
-   "bootstrap": {
-    "node": {
-     "id": "sidecar~10.128.2.23~back-golang-v1-&lt;pod_id&gt;.&lt;user_namespace&gt;~&lt;user_namespace&gt;.svc.cluster.local",
-...</code></pre>
+<img src="_images/envoy_conf.png" alt="envoy conf">
 </div>
+<div class="title">Figure 5. Envoy Configuration</div>
 </div>
 <div class="paragraph">
 <p>It is time to modify a <em>Service Entry</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
@@ -486,17 +456,11 @@ Alternatively, you are able to review the Service Mesh traffic flow by Kiali con
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-service-entry-custom.json</code></pre>
 </div>
 </div>
-<div class="listingblock console-output">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">{
- "configs": [
-  {
-   "@type": "type.googleapis.com/envoy.admin.v3.BootstrapConfigDump",
-   "bootstrap": {
-    "node": {
-     "id": "sidecar~10.128.2.23~back-golang-v1-&lt;pod_id&gt;.&lt;user_namespace&gt;~&lt;user_namespace&gt;.svc.cluster.local",
-...</code></pre>
+<img src="_images/envoy_conf.png" alt="envoy conf">
 </div>
+<div class="title">Figure 6. Envoy Configuration</div>
 </div>
 <div class="paragraph">
 <p>Finally, compare both files differences and draw a definitive conclusion:</p>
