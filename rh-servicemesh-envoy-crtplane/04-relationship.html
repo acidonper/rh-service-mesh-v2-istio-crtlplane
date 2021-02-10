@@ -109,25 +109,40 @@
     <a class="nav-link" href="03-flows.html">3. Service Mesh Communication Flows</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#gw">3.1 Gateways</a>
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-flows.html#create">3.1 Create Red Hat Service Mesh Traffic Flow objects</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-flows.html#gw">3.1.1 Gateways</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-flows.html#vsvc">3.1.2 Virtual Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-flows.html#dr">3.1.3 Destination Rules</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-flows.html#services">3.1.4 K8s Services</a>
+  </li>
+</ul>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#vsvc">3.2 Virtual Services</a>
+    <a class="nav-link" href="03-flows.html#memberrol">3.2 Added a new project to Red Hat Service Mesh Control Plane</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#dr">3.3 Destination Rules</a>
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-flows.html#finalsteps">3.3 Final steps</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-flows.html#annotation">3.3.1 Add Istio Sidecar annotation in Jump App deployments</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#services">3.4 K8s Services</a>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-flows.html#routes">3.3.2 Configure Routes</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#annotation">3.5 Add Istio Sidecar annotation in Jump App deployments</a>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-flows.html#test">3.3.3 Confirm Jump App is running again</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#routes">3.6 Configure Routes</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#test">3.7 Confirm Jump App is running again</a>
+</ul>
   </li>
 </ul>
   </li>
@@ -354,14 +369,9 @@ Additionally, perform a GET request using <em>curl</em> in order to test out hea
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get pods</code></pre>
 </div>
 </div>
-<div class="listingblock console-output">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">NAME                                   READY   STATUS    RESTARTS   AGE
-back-golang-v1-7fb9ff7bdc-mwp8b        2/2     Running   0          1m
-back-python-v1-74c65d94b5-9hzxd        2/2     Running   0          1m
-back-springboot-v1-74db6bb8b4-pw74s    2/2     Running   0          1m
-front-javascript-v1-7b6d4fb65c-9fdfb   2/2     Running   0          1m
-mongo-7c8f67cc4b-t9dnf                 2/2     Running   0          1m</code></pre>
+<img src="_images/jump-app-pods-2-ok.png" alt="jump app pods 2 ok">
 </div>
 </div>
 <div class="ulist">
@@ -376,27 +386,38 @@ mongo-7c8f67cc4b-t9dnf                 2/2     Running   0          1m</code></p
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get routes -n istio-system | grep &lt;user_namespace&gt;</code></pre>
 </div>
 </div>
-<div class="listingblock console-output">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">back-golang-&lt;user_namespace&gt;        back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;         istio-ingressgateway   http2   edge/Redirect        None
-back-golang-v1-&lt;user_namespace&gt;        back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;         istio-ingressgateway   http2   edge/Redirect        None
-front-javascript-&lt;user_namespace&gt;   front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;    istio-ingressgateway   http2   edge/Redirect        None
-front-javascript-v1-&lt;user_namespace&gt;   front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;    istio-ingressgateway   http2   edge/Redirect        None</code></pre>
+<img src="_images/jump-app-get-routes-mesh-ok.png" alt="jump app get routes mesh ok">
 </div>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Visit the <strong>back</strong>, <em>back-golang-&lt;user_namespace&gt;</em> and  <em>back-golang-v1-&lt;user_namespace&gt;</em>, routes via your web browser</p>
-</li>
-<li>
-<p>Visit the <strong>front</strong>, <em>front-javascript-golang-&lt;user_namespace&gt;</em>, route via your web browser. In addition, configure <strong>[ 1000 ]</strong> retries with <strong>[ 1 ]</strong> interval and press <strong>[ JUMP ]</strong> and ensure the following message is displaying in your screen</p>
+<p>Visit the <strong>back</strong>, <em>back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;</em>, route via your web browser</p>
 </li>
 </ul>
 </div>
-<div class="listingblock console-output">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">Jump 0 -&gt; &lt;tutorial_date&gt; GMT+0100 (Central European Standard Time) {"code":200,"message":"/jump - Greetings from Python!"}</code></pre>
+<img src="_images/jump-app-back-ok.png" alt="jump app back ok">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Visit the <strong>front</strong>, <em>front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;</em>, route via your web browser. In addition, configure <strong>[ 1000 ]</strong> retries with <strong>[ 1 ]</strong> interval and press <strong>[ JUMP ]</strong> and ensure the following message is displaying in your screen</p>
+<div class="literalblock">
+<div class="content">
+<pre>...{"code":200,"message":"/jump - Greetings from Python!"}</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-front-jumps-ok.png" alt="jump app front jumps ok">
 </div>
 </div>
 <div class="admonitionblock important">
@@ -411,17 +432,10 @@ It is required to accept <strong>self-signed certificates</strong> provided by O
 </tr>
 </table>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-Alternatively, you are able to review the Service Mesh traffic flow by Kiali console visiting <strong>&lt;kiali_url&gt;</strong> (<em>E.g. <a href="https://kiali-istio-system.apps.tutorialrhmesh.sandbox507.opentlc.com" class="bare">https://kiali-istio-system.apps.tutorialrhmesh.sandbox507.opentlc.com</a></em>)
-</td>
-</tr>
-</table>
+<div class="imageblock">
+<div class="content">
+<img src="_images/certs_warning.png" alt="certs warning" width="50%">
+</div>
 </div>
 </div>
 <div class="sect2">

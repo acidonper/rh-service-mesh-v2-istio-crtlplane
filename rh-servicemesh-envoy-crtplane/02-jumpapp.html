@@ -109,25 +109,40 @@
     <a class="nav-link" href="03-flows.html">3. Service Mesh Communication Flows</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#gw">3.1 Gateways</a>
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-flows.html#create">3.1 Create Red Hat Service Mesh Traffic Flow objects</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-flows.html#gw">3.1.1 Gateways</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-flows.html#vsvc">3.1.2 Virtual Services</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-flows.html#dr">3.1.3 Destination Rules</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-flows.html#services">3.1.4 K8s Services</a>
+  </li>
+</ul>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#vsvc">3.2 Virtual Services</a>
+    <a class="nav-link" href="03-flows.html#memberrol">3.2 Added a new project to Red Hat Service Mesh Control Plane</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#dr">3.3 Destination Rules</a>
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-flows.html#finalsteps">3.3 Final steps</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-flows.html#annotation">3.3.1 Add Istio Sidecar annotation in Jump App deployments</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#services">3.4 K8s Services</a>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-flows.html#routes">3.3.2 Configure Routes</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#annotation">3.5 Add Istio Sidecar annotation in Jump App deployments</a>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-flows.html#test">3.3.3 Confirm Jump App is running again</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#routes">3.6 Configure Routes</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="03-flows.html#test">3.7 Confirm Jump App is running again</a>
+</ul>
   </li>
 </ul>
   </li>
@@ -228,13 +243,9 @@ Please, replace <strong>&lt;user&gt;</strong>, <strong>&lt;pass&gt;</strong>, <s
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc login -u &lt;user&gt; -p &lt;pass&gt; &lt;ocp_cluster_console&gt;</code></pre>
 </div>
 </div>
-<div class="listingblock console-output">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">Login successful.
-
-You have access to 2 projects, the list has been suppressed. You can list all projects with 'oc projects'
-
-Using project "&lt;user_namespace&gt;".</code></pre>
+<img src="_images/oc_login_output.png" alt="oc login output">
 </div>
 </div>
 </div>
@@ -257,6 +268,14 @@ Using project "&lt;user_namespace&gt;".</code></pre>
 </div>
 <div class="title">Figure 1. git clone output</div>
 </div>
+<div class="paragraph">
+<p>Finally, navigate to the new folder created in your system after repository download for completing all tasks included in this tutorial:</p>
+</div>
+<div class="listingblock lines_space console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd rh-service-mesh-v2-istio-crtlplane-resources</code></pre>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="jumpappobjects"><a class="anchor" href="#jumpappobjects"></a>Create <em>Jump App</em> Objects in Openshift</h3>
@@ -265,8 +284,7 @@ Using project "&lt;user_namespace&gt;".</code></pre>
 </div>
 <div class="listingblock lines_7 console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd rh-service-mesh-v2-istio-crtlplane-resources
-vi params.env</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">vi params.env</code></pre>
 </div>
 </div>
 <div class="exampleblock">
@@ -283,28 +301,12 @@ OCP_APPS_DOMAIN=apps.tutorialrhmesh.sandbox507.opentlc.com</p>
 </div>
 <div class="listingblock lines_7 console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc project &lt;user_namespace&gt;
-oc process -f 00-jump-app-template.yml --param-file=./params.env --ignore-unknown-parameters | oc create -f -</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f ./02-jump-app-deploy/jump-app-template.yml --param-file=./params.env --ignore-unknown-parameters | oc create -f -</code></pre>
 </div>
 </div>
-<div class="listingblock console-output">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">rolebinding.rbac.authorization.k8s.io/tekton-deployments-admin created
-service/back-golang created
-service/back-python created
-service/back-springboot created
-service/front-javascript created
-deployment.apps/back-golang-v1 created
-deployment.apps/back-python-v1 created
-deployment.apps/back-springboot-v1 created
-deployment.apps/front-javascript-v1 created
-secret/mongo created
-service/mongo created
-deployment.apps/mongo created
-route.route.openshift.io/back-golang-v1 created
-route.route.openshift.io/back-golang created
-route.route.openshift.io/back-javascript-v1 created
-route.route.openshift.io/back-javascript created</code></pre>
+<img src="_images/jump_app_created.png" alt="jump app created">
 </div>
 </div>
 </div>
@@ -325,14 +327,9 @@ route.route.openshift.io/back-javascript created</code></pre>
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get pods -n &lt;user_namespace&gt;</code></pre>
 </div>
 </div>
-<div class="listingblock console-output">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">NAME                                   READY   STATUS    RESTARTS   AGE
-back-golang-v1-7fb9ff7bdc-mwp8b        1/1     Running   0          1m
-back-python-v1-74c65d94b5-9hzxd        1/1     Running   0          1m
-back-springboot-v1-74db6bb8b4-pw74s    1/1     Running   0          1m
-front-javascript-v1-7b6d4fb65c-9fdfb   1/1     Running   0          1m
-mongo-7c8f67cc4b-t9dnf                 1/1     Running   0          1m</code></pre>
+<img src="_images/jump_app_pods.png" alt="jump app pods">
 </div>
 </div>
 </div>
@@ -353,27 +350,38 @@ mongo-7c8f67cc4b-t9dnf                 1/1     Running   0          1m</code></p
 <pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get routes -n &lt;user_namespace&gt;</code></pre>
 </div>
 </div>
-<div class="listingblock console-output">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">back-golang           back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;          &lt;user_namespace&gt;   http2   edge/Redirect        None
-back-golang-v1        back-golang-v1-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;       &lt;user_namespace&gt;   http2   edge/Redirect        None
-front-javascript      front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;     &lt;user_namespace&gt;   http2   edge/Redirect        None
-front-javascript-v1   front-javascript-v1-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;  &lt;user_namespace&gt;   http2   edge/Redirect        None</code></pre>
+<img src="_images/jump-app-routes.png" alt="jump app routes">
 </div>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Visit the <strong>back</strong>, <em>back-golang</em> and <em>back-golang-v1</em>, routes via your web browser</p>
-</li>
-<li>
-<p>Visit the <strong>front</strong>, <em>front-javascript</em>, route via your web browser, push <strong>- JUMP-</strong> button and ensure the following message is displaying in your screen</p>
+<p>Visit the <strong>back</strong>, <em>back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;</em>, route via your web browser</p>
 </li>
 </ul>
 </div>
-<div class="listingblock console-output">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-output hljs" data-lang="output">Jump 0 -&gt; &lt;tutorial_date&gt; GMT+0100 (Central European Standard Time) {"code":200,"message":"/jump - Greetings from Python!"}</code></pre>
+<img src="_images/jump-app-back-ok.png" alt="jump app back ok">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Visit the <strong>front</strong>, <em>front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;</em>, route via your web browser, push <strong>- JUMP-</strong> button and ensure the following message is displaying in your screen:</p>
+<div class="literalblock">
+<div class="content">
+<pre>...{"code":200,"message":"/jump - Greetings from Python!"}</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-front-ok.png" alt="jump app front ok">
 </div>
 </div>
 <div class="admonitionblock important">
@@ -387,6 +395,11 @@ It is required to accept <strong>self-signed certificates</strong> provided by O
 </td>
 </tr>
 </table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/certs_warning.png" alt="certs warning" width="50%">
+</div>
 </div>
 </div>
 </div>
