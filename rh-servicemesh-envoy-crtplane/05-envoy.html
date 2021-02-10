@@ -151,13 +151,28 @@
     <a class="nav-link" href="04-relationship.html">4. Istio-Envoy Objects Relationship</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="04-relationship.html#dr">4.1 Destination Rules</a>
+    <a class="nav-link" href="04-relationship.html#previous">4.1 Create a new microservice version</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="04-relationship.html#vsvc">4.2 Virtual Services</a>
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-relationship.html#reviewing">4.2 Review Red Hat Service Mesh objects</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-relationship.html#dr">4.2.1 Destination Rules</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="04-relationship.html#se">4.3 Service Entry</a>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-relationship.html#vsvc">4.2.2 Virtual Services</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="04-relationship.html#testvsvc">4.2.2.1 Test Jump App</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-relationship.html#se">4.2.3 Service Entry</a>
+  </li>
+</ul>
   </li>
 </ul>
   </li>
@@ -242,48 +257,8 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> with the value provided 
 <div class="sect2">
 <h3 id="ef"><a class="anchor" href="#ef"></a>Envoy Filters</h3>
 <div class="paragraph">
-<p>Before applying changes, please save the original Envoy proxy configuration following next steps:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-envoy-filter-orig.json</code></pre>
-</div>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/envoy_conf.png" alt="envoy conf">
-</div>
-<div class="title">Figure 1. Envoy Configuration</div>
-</div>
-<div class="paragraph">
-<p>It is time to modify a <em>Envoy Filters</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
-</div>
-<div class="listingblock lines_space console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 05-envoy-proxy/00-envoy-proxy-ef.yaml --param-file=params.env --ignore-unknown-parameters | oc apply -f -</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Once this new <em>Envoy Filters</em> has been modified, save the custom Envoy proxy configuration following next steps:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-envoy-filter-custom.json</code></pre>
-</div>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/envoy_conf.png" alt="envoy conf">
-</div>
-<div class="title">Figure 2. Envoy Configuration</div>
-</div>
-<div class="paragraph">
-<p>Finally, compare both files differences and draw a definitive conclusion:</p>
-</div>
-<div class="listingblock console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">diff back-golang-v1-&lt;pod_id&gt;-envoy-filter-orig.json back-golang-v1-&lt;pod_id&gt;-envoy-filter-custom.json</code></pre>
-</div>
+<p>XXXXXXXXXXXXx
+XXXXXXXXXXXXx</p>
 </div>
 <div class="admonitionblock note">
 <table>

@@ -151,13 +151,28 @@
     <a class="nav-link" href="04-relationship.html">4. Istio-Envoy Objects Relationship</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="04-relationship.html#dr">4.1 Destination Rules</a>
+    <a class="nav-link" href="04-relationship.html#previous">4.1 Create a new microservice version</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="04-relationship.html#vsvc">4.2 Virtual Services</a>
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-relationship.html#reviewing">4.2 Review Red Hat Service Mesh objects</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-relationship.html#dr">4.2.1 Destination Rules</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="04-relationship.html#se">4.3 Service Entry</a>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-relationship.html#vsvc">4.2.2 Virtual Services</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="04-relationship.html#testvsvc">4.2.2.1 Test Jump App</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-relationship.html#se">4.2.3 Service Entry</a>
+  </li>
+</ul>
   </li>
 </ul>
   </li>
@@ -266,6 +281,7 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> with the value provided 
 <div class="content">
 <img src="_images/jump-app-gws-ok.png" alt="jump app gws ok">
 </div>
+<div class="title">Figure 1. Gateways Created</div>
 </div>
 </div>
 <div class="sect2">
@@ -285,6 +301,7 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> with the value provided 
 <div class="content">
 <img src="_images/jump-app-vss-ok.png" alt="jump app vss ok">
 </div>
+<div class="title">Figure 2. Virtual Services Created</div>
 </div>
 </div>
 <div class="sect2">
@@ -304,6 +321,7 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> with the value provided 
 <div class="content">
 <img src="_images/jump-app-drs-ok.png" alt="jump app drs ok">
 </div>
+<div class="title">Figure 3. Destination Rules Created</div>
 </div>
 </div>
 <div class="sect2">
@@ -323,6 +341,7 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> with the value provided 
 <div class="content">
 <img src="_images/jump-app-svcs-ok.png" alt="jump app svcs ok">
 </div>
+<div class="title">Figure 4. k8s Services Created</div>
 </div>
 </div>
 </div>
@@ -343,7 +362,7 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> with the value provided 
 <i class="fa icon-important" title="Important"></i>
 </td>
 <td class="content">
-Let your Instructor know that you are at this point
+Let the Instructor know that you are at this point
 </td>
 </tr>
 </table>
@@ -355,6 +374,7 @@ Let your Instructor know that you are at this point
 <div class="content">
 <img src="_images/jump-app-front-ko.png" alt="jump app front ko">
 </div>
+<div class="title">Figure 5. Frontend KO</div>
 </div>
 </div>
 </div>
@@ -378,6 +398,7 @@ Let your Instructor know that you are at this point
 <div class="content">
 <img src="_images/jump-app-front-depl-patch.png" alt="jump app front depl patch">
 </div>
+<div class="title">Figure 6. Front Patched</div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -388,6 +409,7 @@ Let your Instructor know that you are at this point
 <div class="content">
 <img src="_images/jump-app-back-spb-depl-patch.png" alt="jump app back spb depl patch">
 </div>
+<div class="title">Figure 7. Back Springboot Patched</div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -398,6 +420,7 @@ Let your Instructor know that you are at this point
 <div class="content">
 <img src="_images/jump-app-back-py-depl-patch.png" alt="jump app back py depl patch">
 </div>
+<div class="title">Figure 8. Back Python Patched</div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -408,6 +431,7 @@ Let your Instructor know that you are at this point
 <div class="content">
 <img src="_images/jump-app-back-go-depl-patch.png" alt="jump app back go depl patch">
 </div>
+<div class="title">Figure 9. Back Golang Patched</div>
 </div>
 <div class="listingblock console-input">
 <div class="content">
@@ -418,6 +442,7 @@ Let your Instructor know that you are at this point
 <div class="content">
 <img src="_images/jump-app-back-mg-depl-patch.png" alt="jump app back mg depl patch">
 </div>
+<div class="title">Figure 10. MongoDB Patched</div>
 </div>
 <div class="paragraph">
 <p>Before continuing with the following steps, please test Jump App <em>pods</em> status, in order to be sure that 2 replicas are running for each microservice:</p>
@@ -431,6 +456,7 @@ Let your Instructor know that you are at this point
 <div class="content">
 <img src="_images/jump-app-pods-2-ok.png" alt="jump app pods 2 ok">
 </div>
+<div class="title">Figure 11. Jump App Pods Mesh</div>
 </div>
 </div>
 <div class="sect2">
@@ -452,6 +478,7 @@ Let your Instructor know that you are at this point
 <div class="content">
 <img src="_images/jump-app-route-del.png" alt="jump app route del">
 </div>
+<div class="title">Figure 12. Jump App Routes Deleted</div>
 </div>
 </div>
 <div class="sect3">
@@ -471,6 +498,7 @@ Let your Instructor know that you are at this point
 <div class="content">
 <img src="_images/jump-app-routes-mesh-ok.png" alt="jump app routes mesh ok">
 </div>
+<div class="title">Figure 13. Mesh Routes Created</div>
 </div>
 </div>
 </div>
@@ -507,6 +535,7 @@ Look at the number of containers in each microservice, it must contains 2 contai
 <div class="content">
 <img src="_images/jump-app-pods-2-ok.png" alt="jump app pods 2 ok">
 </div>
+<div class="title">Figure 14. Jump App Pods Mesh</div>
 </div>
 <div class="ulist">
 <ul>
@@ -524,6 +553,7 @@ Look at the number of containers in each microservice, it must contains 2 contai
 <div class="content">
 <img src="_images/jump-app-get-routes-mesh-ok.png" alt="jump app get routes mesh ok">
 </div>
+<div class="title">Figure 15. Jump App Routes</div>
 </div>
 <div class="ulist">
 <ul>
@@ -536,6 +566,7 @@ Look at the number of containers in each microservice, it must contains 2 contai
 <div class="content">
 <img src="_images/jump-app-back-ok.png" alt="jump app back ok">
 </div>
+<div class="title">Figure 16. Jump App Back</div>
 </div>
 <div class="ulist">
 <ul>
@@ -553,6 +584,7 @@ Look at the number of containers in each microservice, it must contains 2 contai
 <div class="content">
 <img src="_images/jump-app-front-jumps-ok.png" alt="jump app front jumps ok">
 </div>
+<div class="title">Figure 17. Jump App Front Web UI Multi Jumps</div>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -570,6 +602,7 @@ It is required to accept <strong>self-signed certificates</strong> provided by O
 <div class="content">
 <img src="_images/certs_warning.png" alt="certs warning" width="50%">
 </div>
+<div class="title">Figure 18. Openshift Self-signed Certificates Warning</div>
 </div>
 </div>
 <div class="sect2">
@@ -581,6 +614,7 @@ It is required to accept <strong>self-signed certificates</strong> provided by O
 <div class="content">
 <img src="_images/jump-app-kiali.png" alt="jump app kiali">
 </div>
+<div class="title">Figure 19. Kiali Console</div>
 </div>
 </div>
 </div>

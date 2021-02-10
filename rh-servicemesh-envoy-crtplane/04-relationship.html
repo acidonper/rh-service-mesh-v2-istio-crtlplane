@@ -151,13 +151,28 @@
     <a class="nav-link" href="04-relationship.html">4. Istio-Envoy Objects Relationship</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#dr">4.1 Destination Rules</a>
+    <a class="nav-link" href="#previous">4.1 Create a new microservice version</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#vsvc">4.2 Virtual Services</a>
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#reviewing">4.2 Review Red Hat Service Mesh objects</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#dr">4.2.1 Destination Rules</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="#se">4.3 Service Entry</a>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#vsvc">4.2.2 Virtual Services</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="#testvsvc">4.2.2.1 Test Jump App</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#se">4.2.3 Service Entry</a>
+  </li>
+</ul>
   </li>
 </ul>
   </li>
@@ -216,13 +231,57 @@
 <article class="doc">
 <h1 class="page">Istio-Envoy Objects Relationship</h1>
 <div class="sect1">
-<h2 id="_review_red_hat_service_mesh_objects"><a class="anchor" href="#_review_red_hat_service_mesh_objects"></a>Review Red Hat Service Mesh objects</h2>
+<h2 id="previous"><a class="anchor" href="#previous"></a>Create a new microservice version</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>First at all, it is required to create a new microservice <em>deployment</em> and a <em>service</em> objects for being able to work with different micro versions in Service Mesh.</p>
+</div>
+<div class="paragraph">
+<p>Please, create the previous object through the respective Openshift template executing the following command:</p>
+</div>
+<div class="listingblock lines_space console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 04-istio-envoy-relationship/00-istio-envoy-rel-micro-version.yaml --param-file=params.env --ignore-unknown-parameters | oc create -f - -n &lt;user_namespace&gt;</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-new-micro-version-ok.png" alt="jump app new micro version ok">
+</div>
+<div class="title">Figure 1. New Micro Version Created</div>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc patch deployment back-golang-v2 -p '{"spec":{"template":{"metadata":{"annotations":{"sidecar.istio.io/inject":"true"}}}}}' -n &lt;user_namespace&gt;</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-back-golang-v2-depl-patch.png" alt="jump app back golang v2 depl patch">
+</div>
+<div class="title">Figure 2. Front Patched</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="reviewing"><a class="anchor" href="#reviewing"></a>Review Red Hat Service Mesh objects</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>When a new Service Mesh object is created in a specific namespace, a set of configurations blocks are added to Envoy proxies in order to be able to apply these rules in the mesh traffic flow.</p>
 </div>
 <div class="paragraph">
-<p>In this step, you will review how these objects affect Envoy proxies getting their configuration from Envoy itself.</p>
+<p>In this step, you will review how these objects affect Envoy proxies getting their configuration from Envoy itself. In order to be able to obtain some information from pods, it is required to obtain pods names before starting this section:</p>
+</div>
+<div class="listingblock lines_7 console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get pods</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-pods-2-v2.png" alt="jump app pods 2 v2">
+</div>
+<div class="title">Figure 3. Jump App Pods Mesh</div>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -231,7 +290,7 @@
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Please, replace <strong>&lt;user_namespace&gt;</strong> and <strong>&lt;pod_id&gt;</strong> with the values provided by the Instructor at the beginning of this tutorial or values obtained from openshift cluster.
+Please, replace <strong>&lt;user_namespace&gt;</strong> and <strong>&lt;back-golang-pod_id&gt;</strong> with the values provided by the Instructor at the beginning of this tutorial or values obtained from openshift cluster.
 </td>
 </tr>
 </table>
@@ -243,14 +302,14 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> and <strong>&lt;pod_id&g
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-destination-rule-orig.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec &lt;back-golang-pod_id&gt;&lt;back-golang-pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; destination-rule-config-init.json</code></pre>
 </div>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/envoy_conf.png" alt="envoy conf">
+<img src="_images/jump-app-dr-golang.png" alt="jump app dr golang">
 </div>
-<div class="title">Figure 1. Envoy Configuration</div>
+<div class="title">Figure 4. Envoy Configuration</div>
 </div>
 <div class="paragraph">
 <p>It is time to modify a <em>Destination Rule</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
@@ -260,26 +319,26 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> and <strong>&lt;pod_id&g
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 04-istio-envoy-relationship/00-istio-envoy-rel-drs.yaml --param-file=params.env --ignore-unknown-parameters | oc apply -f -</code></pre>
 </div>
 </div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-dr-new.png" alt="jump app dr new">
+</div>
+<div class="title">Figure 5. Modifed <em>Destination Rule</em> Configuration</div>
+</div>
 <div class="paragraph">
 <p>Once this new <em>Destination Rule</em> has been modified, save the custom Envoy proxy configuration following next steps:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-destination-rule-custom.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec &lt;back-golang-pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; destination-rule-config-custom.json</code></pre>
 </div>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/envoy_conf.png" alt="envoy conf">
-</div>
-<div class="title">Figure 2. Envoy Configuration</div>
 </div>
 <div class="paragraph">
 <p>Finally, compare both files differences and draw a definitive conclusion:</p>
 </div>
-<div class="listingblock console-input">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">diff back-golang-v1-&lt;pod_id&gt;-destination-rule-orig.json back-golang-v1-&lt;pod_id&gt;-destination-rule-custom.json</code></pre>
+<img src="_images/jump-app-dr-compare.png" alt="jump app dr compare">
 </div>
 </div>
 </div>
@@ -290,43 +349,43 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> and <strong>&lt;pod_id&g
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-virtual-service-orig.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec &lt;back-golang-pod_id&gt;&lt;back-golang-pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; virtual-service-config-init.json</code></pre>
 </div>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/envoy_conf.png" alt="envoy conf">
+<img src="_images/jump-app-vs-golang.png" alt="jump app vs golang">
 </div>
-<div class="title">Figure 3. Envoy Configuration</div>
+<div class="title">Figure 6. Envoy Configuration</div>
 </div>
 <div class="paragraph">
-<p>It is time to modify a <em>Virtual Service</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
+<p>It is time to modify a <em>Virtual Services</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
 </div>
 <div class="listingblock lines_space console-input">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 04-istio-envoy-relationship/01-istio-envoy-rel-vss.yaml --param-file=params.env --ignore-unknown-parameters | oc apply -f -</code></pre>
 </div>
 </div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-vs-new.png" alt="jump app vs new">
+</div>
+<div class="title">Figure 7. Modifed <em>Virtual Services</em> Configuration</div>
+</div>
 <div class="paragraph">
-<p>Once this new <em>Virtual Service</em> has been modified, save the custom Envoy proxy configuration following next steps:</p>
+<p>Once this new <em>Virtual Services</em> has been modified, save the custom Envoy proxy configuration following next steps:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-virtual-service-custom.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec &lt;back-golang-pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; virtual-service-config-custom.json</code></pre>
 </div>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/envoy_conf.png" alt="envoy conf">
-</div>
-<div class="title">Figure 4. Envoy Configuration</div>
 </div>
 <div class="paragraph">
 <p>Finally, compare both files differences and draw a definitive conclusion:</p>
 </div>
-<div class="listingblock console-input">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">diff back-golang-v1-&lt;pod_id&gt;-virtual-service-orig.json back-golang-v1-&lt;pod_id&gt;-virtual-service-custom.json</code></pre>
+<img src="_images/jump-app-vs-compare.png" alt="jump app vs compare">
 </div>
 </div>
 <div class="admonitionblock note">
@@ -354,87 +413,45 @@ Additionally, perform a GET request using <em>curl</em> in order to test out hea
 {"code":200,"message":"/jump - Greetings from Golang!"}%</code></pre>
 </div>
 </div>
+<div class="sect3">
+<h4 id="testvsvc"><a class="anchor" href="#testvsvc"></a>Test Jump App</h4>
 <div class="paragraph">
 <p>Once the previous objects are applied, it is time to test our services again with a multiple number of connections. For this step, please follow the next steps:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Get pods</p>
-</li>
-</ul>
-</div>
-<div class="listingblock lines_7 console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get pods</code></pre>
-</div>
+<div class="paragraph">
+<p>Once the Virtual Service rules are applied, visit the <strong>back</strong>, <em>back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;/redirection-test</em>, route via your web browser</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/jump-app-pods-2-ok.png" alt="jump app pods 2 ok">
+<img src="_images/jump-app-back-golang-redirect-ok.png" alt="jump app back golang redirect ok">
 </div>
+<div class="title">Figure 8. Jump App Back Redirection</div>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Obtain external services URLs</p>
-</li>
-</ul>
-</div>
-<div class="listingblock lines_7 console-input">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get routes -n istio-system | grep &lt;user_namespace&gt;</code></pre>
-</div>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/jump-app-get-routes-mesh-ok.png" alt="jump app get routes mesh ok">
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Visit the <strong>back</strong>, <em>back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;</em>, route via your web browser</p>
-</li>
-</ul>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/jump-app-back-ok.png" alt="jump app back ok">
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
+<div class="paragraph">
 <p>Visit the <strong>front</strong>, <em>front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;</em>, route via your web browser. In addition, configure <strong>[ 1000 ]</strong> retries with <strong>[ 1 ]</strong> interval and press <strong>[ JUMP ]</strong> and ensure the following message is displaying in your screen</p>
+</div>
 <div class="literalblock">
 <div class="content">
 <pre>...{"code":200,"message":"/jump - Greetings from Python!"}</pre>
 </div>
 </div>
-</li>
-</ul>
-</div>
 <div class="imageblock">
 <div class="content">
 <img src="_images/jump-app-front-jumps-ok.png" alt="jump app front jumps ok">
 </div>
+<div class="title">Figure 9. Jump App Front Web UI Multi Jumps</div>
 </div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-It is required to accept <strong>self-signed certificates</strong> provided by Openshift
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p><strong>KIALI</strong></p>
+</div>
+<div class="paragraph">
+<p>Jump App is generating traffic flow thanks to the frontend where was defined an specific number of continuous jumps. In order to review the Service Mesh traffic flow in your project, please visit Kiali console <strong>&lt;kiali_url&gt;</strong> (<em>E.g. <a href="https://kiali-istio-system.apps.tutorialrhmesh.sandbox507.opentlc.com" class="bare">https://kiali-istio-system.apps.tutorialrhmesh.sandbox507.opentlc.com</a></em>):</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/certs_warning.png" alt="certs warning" width="50%">
+<img src="_images/jump-app-kiali-v2.png" alt="jump app kiali v2">
+</div>
+<div class="title">Figure 10. Kiali Console</div>
 </div>
 </div>
 </div>
@@ -445,14 +462,14 @@ It is required to accept <strong>self-signed certificates</strong> provided by O
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-service-entry-orig.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec &lt;back-golang-pod_id&gt;&lt;back-golang-pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; service-entry-config-init.json</code></pre>
 </div>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/envoy_conf.png" alt="envoy conf">
+<img src="_images/jump-app-se-golang.png" alt="jump app se golang">
 </div>
-<div class="title">Figure 5. Envoy Configuration</div>
+<div class="title">Figure 11. Envoy Configuration</div>
 </div>
 <div class="paragraph">
 <p>It is time to modify a <em>Service Entry</em> in order to see how it is implemented in Envoy proxy configuration through the respective configuration blocks:</p>
@@ -462,26 +479,26 @@ It is required to accept <strong>self-signed certificates</strong> provided by O
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 04-istio-envoy-relationship/02-istio-envoy-rel-ses.yaml --param-file=params.env --ignore-unknown-parameters | oc apply -f -</code></pre>
 </div>
 </div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-se-new.png" alt="jump app se new">
+</div>
+<div class="title">Figure 12. Modifed <em>Service Entry</em> Configuration</div>
+</div>
 <div class="paragraph">
 <p>Once this new <em>Service Entry</em> has been modified, save the custom Envoy proxy configuration following next steps:</p>
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec back-golang-v1-&lt;pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; back-golang-v1-&lt;pod_id&gt;-service-entry-custom.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec &lt;back-golang-pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; service-entry-config-custom.json</code></pre>
 </div>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/envoy_conf.png" alt="envoy conf">
-</div>
-<div class="title">Figure 6. Envoy Configuration</div>
 </div>
 <div class="paragraph">
 <p>Finally, compare both files differences and draw a definitive conclusion:</p>
 </div>
-<div class="listingblock console-input">
+<div class="imageblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">diff back-golang-v1-&lt;pod_id&gt;-service-entry-orig.json back-golang-v1-&lt;pod_id&gt;-service-entry-custom.json</code></pre>
+<img src="_images/jump-app-se-compare.png" alt="jump app se compare">
 </div>
 </div>
 <div class="listingblock console-input">

@@ -151,13 +151,28 @@
     <a class="nav-link" href="04-relationship.html">4. Istio-Envoy Objects Relationship</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="04-relationship.html#dr">4.1 Destination Rules</a>
+    <a class="nav-link" href="04-relationship.html#previous">4.1 Create a new microservice version</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="04-relationship.html#vsvc">4.2 Virtual Services</a>
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-relationship.html#reviewing">4.2 Review Red Hat Service Mesh objects</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-relationship.html#dr">4.2.1 Destination Rules</a>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="04-relationship.html#se">4.3 Service Entry</a>
+  <li class="nav-item" data-depth="3">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-relationship.html#vsvc">4.2.2 Virtual Services</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="4">
+    <a class="nav-link" href="04-relationship.html#testvsvc">4.2.2.1 Test Jump App</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-relationship.html#se">4.2.3 Service Entry</a>
+  </li>
+</ul>
   </li>
 </ul>
   </li>
@@ -247,6 +262,7 @@ Please, replace <strong>&lt;user&gt;</strong>, <strong>&lt;pass&gt;</strong>, <s
 <div class="content">
 <img src="_images/oc_login_output.png" alt="oc login output">
 </div>
+<div class="title">Figure 1. OC CLI Login Output</div>
 </div>
 </div>
 <div class="sect2">
@@ -266,7 +282,7 @@ Please, replace <strong>&lt;user&gt;</strong>, <strong>&lt;pass&gt;</strong>, <s
 <div class="content">
 <img src="_images/git_clone_output.png" alt="git clone output">
 </div>
-<div class="title">Figure 1. git clone output</div>
+<div class="title">Figure 2. git clone output</div>
 </div>
 <div class="paragraph">
 <p>Finally, navigate to the new folder created in your system after repository download for completing all tasks included in this tutorial:</p>
@@ -308,6 +324,7 @@ OCP_APPS_DOMAIN=apps.tutorialrhmesh.sandbox507.opentlc.com</p>
 <div class="content">
 <img src="_images/jump_app_created.png" alt="jump app created">
 </div>
+<div class="title">Figure 3. Jump App Deployed</div>
 </div>
 </div>
 <div class="sect2">
@@ -331,6 +348,7 @@ OCP_APPS_DOMAIN=apps.tutorialrhmesh.sandbox507.opentlc.com</p>
 <div class="content">
 <img src="_images/jump_app_pods.png" alt="jump app pods">
 </div>
+<div class="title">Figure 4. Jump App Pods</div>
 </div>
 </div>
 <div class="sect2">
@@ -354,6 +372,7 @@ OCP_APPS_DOMAIN=apps.tutorialrhmesh.sandbox507.opentlc.com</p>
 <div class="content">
 <img src="_images/jump-app-routes.png" alt="jump app routes">
 </div>
+<div class="title">Figure 5. Jump App Routes</div>
 </div>
 <div class="ulist">
 <ul>
@@ -366,6 +385,7 @@ OCP_APPS_DOMAIN=apps.tutorialrhmesh.sandbox507.opentlc.com</p>
 <div class="content">
 <img src="_images/jump-app-back-ok.png" alt="jump app back ok">
 </div>
+<div class="title">Figure 6. Jump App Back</div>
 </div>
 <div class="ulist">
 <ul>
@@ -383,6 +403,7 @@ OCP_APPS_DOMAIN=apps.tutorialrhmesh.sandbox507.opentlc.com</p>
 <div class="content">
 <img src="_images/jump-app-front-ok.png" alt="jump app front ok">
 </div>
+<div class="title">Figure 7. Jump App Frontend Web UI</div>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -400,6 +421,7 @@ It is required to accept <strong>self-signed certificates</strong> provided by O
 <div class="content">
 <img src="_images/certs_warning.png" alt="certs warning" width="50%">
 </div>
+<div class="title">Figure 8. Openshift Self-signed Certificates Warning</div>
 </div>
 </div>
 </div>
