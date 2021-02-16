@@ -185,7 +185,34 @@
 </ul>
   </li>
   <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
     <a class="nav-link" href="06-crtlplane.html">6. Istio Control Plane</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-crtlplane.html#review">6.1 Review consequences of adding a new project to Istio Control Plane</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06-crtlplane.html#smr">6.1.1 Create <em>ServiceMeshMember</em> Object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06-crtlplane.html#np">6.1.2 Review Network Policies Created</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-crtlplane.html#test">6.2 Test <em>Jump App</em></a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06-crtlplane.html#up">6.2.1 Confirm <em>Jump App</em> is running again</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06-crtlplane.html#kiali">6.2.2 Visit Kiali</a>
+  </li>
+</ul>
+  </li>
+</ul>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -315,7 +342,7 @@
 <div class="sect2">
 <h3>Service Mesh Communication Flows</h3>
 <div class="paragraph">
-<p>In this step, you will review how Service Mesh objects are created and allow the different communication flows in Service Mesh in a specific namespace.</p>
+<p>In this phase, you will review how Service Mesh objects are created and allow the different communication flows in Service Mesh in a specific namespace.</p>
 </div>
 <div class="paragraph">
 <p><a href="03-flows.html" class="page">Start this exercise&#8230;&#8203;</a></p>
@@ -324,7 +351,7 @@
 <div class="sect2">
 <h3>Istio-Envoy Objects Relationship</h3>
 <div class="paragraph">
-<p>In this step, you will go through Service Mesh objects definition and their effect at Envoy level.</p>
+<p>During this step, you will go through Service Mesh objects definition and their effect at Envoy level.</p>
 </div>
 <div class="paragraph">
 <p><a href="04-relationship.html" class="page">Start this exercise&#8230;&#8203;</a></p>
@@ -333,7 +360,7 @@
 <div class="sect2">
 <h3>Envoy Proxy</h3>
 <div class="paragraph">
-<p>In this step, you will play with Service Mesh <em>envoy filters</em> and see the results.</p>
+<p>During this part of the tutorial, you will play with Service Mesh <em>envoy filters</em> and see the results.</p>
 </div>
 <div class="paragraph">
 <p><a href="05-envoy.html" class="page">Start this exercise&#8230;&#8203;</a></p>
@@ -342,7 +369,7 @@
 <div class="sect2">
 <h3>Istio Control Plane</h3>
 <div class="paragraph">
-<p>hola</p>
+<p>In this phase, you will integrate a selected project in the Service Mesh Control Plane through an object names <em>ServiceMeshMember</em> and review the implications for this project.</p>
 </div>
 <div class="paragraph">
 <p><a href="06-crtlplane.html" class="page">Start this exercise&#8230;&#8203;</a></p>

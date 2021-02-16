@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Untitled :: Red Hat Service Mesh - Envoy &amp; Istio Control Plane</title>
+    <title>Istio Control Plane :: Red Hat Service Mesh - Envoy &amp; Istio Control Plane</title>
     <link rel="canonical" href="http://localhost:3000/rhs-build-course/index.html/rh-servicemesh-envoy-crtplane/06-crtlplane.html">
     <link rel="prev" href="05-envoy.html">
     <link rel="next" href="07-services.html">
@@ -186,7 +186,34 @@
 </ul>
   </li>
   <li class="nav-item is-current-page" data-depth="1">
+    <button class="nav-item-toggle"></button>
     <a class="nav-link" href="06-crtlplane.html">6. Istio Control Plane</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#review">6.1 Review consequences of adding a new project to Istio Control Plane</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#smr">6.1.1 Create <em>ServiceMeshMember</em> Object</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#np">6.1.2 Review Network Policies Created</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="#test">6.2 Test <em>Jump App</em></a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#up">6.2.1 Confirm <em>Jump App</em> is running again</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="#kiali">6.2.2 Visit Kiali</a>
+  </li>
+</ul>
+  </li>
+</ul>
   </li>
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
@@ -253,8 +280,266 @@
   </div>
   <div class="content">
 <article class="doc">
+<h1 class="page">Istio Control Plane</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Let the Instructor know that you are at this point
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>A</p>
+<p>At this moment, you are not able to access to <em>Jump App</em> because of a set of required tasks which you have to perform next.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="review"><a class="anchor" href="#review"></a>Review consequences of adding a new project to Istio Control Plane</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In Istio, the <em>ServiceMeshMemberRoll</em> lists the projects belonging to the control plane and only projects listed in the ServiceMeshMemberRoll are affected by the control plane.</p>
+</div>
+<div class="paragraph">
+<p>When a service mesh user who doesn’t have privileges would like to add members to the <em>ServiceMeshMemberRoll</em>, Istio provides an object names <em>ServiceMeshMember</em> which adds a selected project to the <em>ServiceMeshMemberRoll</em> within the control plane project that it references.</p>
+</div>
+<div class="paragraph">
+<p>Once a new project is added to the Service Mesh Control Plane, it is automatically provided with a set of new Kubernetes objects in order to restring and control the communications flow inside this namespace by Istio.</p>
+</div>
+<div class="paragraph">
+<p>In this step, you have to be able to add this namespace in the Service Mesh Control Plane and understand the implications of this procedure.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Please, replace <strong>&lt;user_namespace&gt;</strong> with the value provided by the Instructor at the beginning of this tutorial.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect2">
+<h3 id="smr"><a class="anchor" href="#smr"></a>Create <em>ServiceMeshMember</em> Object</h3>
+<div class="paragraph">
+<p>First at all, it is required to create a new <em>ServiceMeshMember</em> object for being able to add a new project to the Service Mesh.</p>
+</div>
+<div class="paragraph">
+<p>Please, create the previous object through the respective Openshift template executing the following command:</p>
+</div>
+<div class="listingblock lines_space console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 06-istio-ctrlplane/00-jump-app-ns-smr.yaml --param-file=params.env --ignore-unknown-parameters | oc apply -f - -n &lt;user_namespace&gt;</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-ns-smr.png" alt="jump app ns smr">
+</div>
+<div class="title">Figure 1. <em>ServiceMeshMember</em> Created</div>
+</div>
+<div class="paragraph">
+<p>Additionally, you are able to check this new object through the Openshift Console:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-ns-smr-con1.png" alt="jump app ns smr con1">
+</div>
+<div class="title">Figure 2. <em>ServiceMeshMember</em> Created Console- 1</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-ns-smr-con2.png" alt="jump app ns smr con2">
+</div>
+<div class="title">Figure 3. <em>ServiceMeshMember</em> Created Console - 2</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-ns-smr-con3.png" alt="jump app ns smr con3">
+</div>
+<div class="title">Figure 4. <em>ServiceMeshMember</em> Created Console - 3</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="np"><a class="anchor" href="#np"></a>Review Network Policies Created</h3>
+<div class="paragraph">
+<p>In a cluster using a Kubernetes Container Network Interface (CNI) plug-in that supports Kubernetes network policy, network isolation is controlled entirely by NetworkPolicy objects.  In OpenShift Container Platform, OpenShift SDN supports using network policy in its default network isolation mode.</p>
+</div>
+<div class="paragraph">
+<p>By default, all pods in a project are accessible from other pods and network endpoints. However, once a new project is added to the Service Mesh Control Plane, Istio creates a set of <em>NetworkPolicy</em> objects in that project to indicate the allowed incoming connections within the mesh.</p>
+</div>
+<div class="paragraph">
+<p>In order to display the new network policies objects, please execute the following command:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get network policies -n &lt;user_namespace&gt;</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-ns-smr-np.png" alt="jump app ns smr np">
+</div>
+<div class="title">Figure 5. <em>NetworkPolicies</em> Created Project</div>
+</div>
+<div class="paragraph">
+<p>Then, you should review the first network policy in order to understand why external traffic flow is allowed through Istio Gateway to Jump App pods which are exposed by a <em>Gateway</em> Object:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get networkpolicy istio-expose-route-basic -o yaml</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-ns-smr-np-1.png" alt="jump app ns smr np 1">
+</div>
+<div class="title">Figure 6. <em>NetworkPolicies</em> Created Project</div>
+</div>
+<div class="paragraph">
+<p>Finally, the second network policy allows internal Service Mesh traffic through any pod included in a project inside the Service Mesh Control Plane installed in <em>istio-system</em> namespace:</p>
+</div>
+<div class="listingblock console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get networkpolicy istio-mesh-basic -o yaml</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-ns-smr-np-2.png" alt="jump app ns smr np 2">
+</div>
+<div class="title">Figure 7. <em>NetworkPolicies</em> Created Project</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="test"><a class="anchor" href="#test"></a>Test <em>Jump App</em></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="up"><a class="anchor" href="#up"></a>Confirm <em>Jump App</em> is running again</h3>
+<div class="paragraph">
+<p>Once your project has been added to the Service Mesh Control Plane, it is required to follow next steps in order to ensure your demo app is running properly:</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Look at the number of containers in each microservice, it must contains 2 container per each pod (<strong>READY 2/2</strong>).
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Get pods</p>
+</li>
+</ul>
+</div>
+<div class="listingblock lines_7 console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get pods</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-pods-2-ok.png" alt="jump app pods 2 ok">
+</div>
+<div class="title">Figure 8. Jump App Pods Mesh</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Obtain external services URLs</p>
+</li>
+</ul>
+</div>
+<div class="listingblock lines_7 console-input">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc get routes -n istio-system | grep &lt;user_namespace&gt;</code></pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-get-routes-mesh-ok.png" alt="jump app get routes mesh ok">
+</div>
+<div class="title">Figure 9. Jump App Routes</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Visit the <strong>back</strong>, <em>back-golang-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;</em>, route via your web browser</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-back-ok.png" alt="jump app back ok">
+</div>
+<div class="title">Figure 10. Jump App Back</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Visit the <strong>front</strong>, <em>front-javascript-&lt;user_namespace&gt;.&lt;openshift_apps_domain&gt;</em>, route via your web browser. In addition, configure <strong>[ 10000 ]</strong> retries with <strong>[ 1 ]</strong> interval and press <strong>[ JUMP ]</strong> and ensure the following message is displaying in your screen</p>
+<div class="literalblock">
+<div class="content">
+<pre>...{"code":200,"message":"/jump - Greetings from Python!"}</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-front-jumps-ok.png" alt="jump app front jumps ok">
+</div>
+<div class="title">Figure 11. Jump App Front Web UI Multi Jumps</div>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+It is required to accept <strong>self-signed certificates</strong> provided by Openshift
+</td>
+</tr>
+</table>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/certs_warning.png" alt="certs warning" width="50%">
+</div>
+<div class="title">Figure 12. Openshift Self-signed Certificates Warning</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="kiali"><a class="anchor" href="#kiali"></a>Visit Kiali</h3>
+<div class="paragraph">
+<p>Jump App is generating traffic flow thanks to the frontend where was defined an specific number of continuous jumps. In order to review the Service Mesh traffic flow in your project, please visit Kiali console <strong>&lt;kiali_url&gt;</strong> (<em>E.g. <a href="https://kiali-istio-system.apps.tutorialrhmesh.sandbox507.opentlc.com" class="bare">https://kiali-istio-system.apps.tutorialrhmesh.sandbox507.opentlc.com</a></em>):</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/jump-app-kiali-v2.png" alt="jump app kiali v2">
+</div>
+<div class="title">Figure 13. Kiali Console</div>
+</div>
+</div>
+</div>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="05-envoy.html">5. Envoy Proxy</a></span>
