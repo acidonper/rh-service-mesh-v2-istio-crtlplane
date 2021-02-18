@@ -312,7 +312,7 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> with the value provided 
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec &lt;back-golang-pod_id&gt;&lt;back-golang-pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; envoy-filter-config-init.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc exec &lt;back-golang-pod_id&gt; -c istio-proxy -n &lt;user_namespace&gt; curl localhost:15000/config_dump &gt; envoy-filter-config-init.json</code></pre>
 </div>
 </div>
 <div class="imageblock">
