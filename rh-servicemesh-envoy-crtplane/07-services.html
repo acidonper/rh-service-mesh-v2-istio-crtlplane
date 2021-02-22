@@ -317,7 +317,7 @@ Follow <a href="https://istio.io/v1.6/docs/tasks/traffic-management/ingress/secu
 </div>
 <div class="listingblock console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc create -n istio-system secret tls &lt;user_namespace&gt;-credential --key=./07-istio-sds/jumpapp.com.key --cert=./07-istio-sds/jumpapp.com.crt</code></pre>
+<pre class="highlightjs highlight"><code class="language-input hljs" data-lang="input">oc create -n istio-system secret tls &lt;user_namespace&gt;-credential --key=./07-istio-sds/front-jumpapp.com.key --cert=./07-istio-sds/front-jumpapp.com.crt</code></pre>
 </div>
 </div>
 <div class="imageblock">
@@ -340,12 +340,13 @@ Follow <a href="https://istio.io/v1.6/docs/tasks/traffic-management/ingress/secu
 </div>
 <div class="listingblock lines_space console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 07-istio-sds/00-jump-app-front-gw.yaml --param-file=params.env --ignore-unknown-parameters | oc apply -f - -n istio-system</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc project istio-system
+oc process -f 07-istio-sds/00-jump-app-front-gw.yaml --param-file=params.env --ignore-unknown-parameters | oc apply -f -</code></pre>
 </div>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="_images/jump-app-secret-ok.png" alt="jump app secret ok">
+<img src="_images/jump-app-gw-ok.png" alt="jump app gw ok">
 </div>
 <div class="title">Figure 2. Front Gateway Modified</div>
 </div>
@@ -369,7 +370,8 @@ Follow <a href="https://istio.io/v1.6/docs/tasks/traffic-management/ingress/secu
 </div>
 <div class="listingblock lines_space console-input">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc process -f 07-istio-sds/01-jump-app-front-route.yaml --param-file=params.env --ignore-unknown-parameters | oc apply -f - -n istio-system</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">oc project istio-system
+oc process -f 07-istio-sds/01-jump-app-front-route.yaml --param-file=params.env --ignore-unknown-parameters | oc apply -f -</code></pre>
 </div>
 </div>
 <div class="imageblock">
