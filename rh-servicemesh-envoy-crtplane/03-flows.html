@@ -301,7 +301,7 @@
 </ul>
 </div>
 <div class="paragraph">
-<p>In this step, you have to be able to deploy this <em>Jump App</em> Service Mesh objects in order to introduce this application in the Service Mesh and publish it to external clients.</p>
+<p>In this step, you have to be able to deploy these <em>Jump App</em> Service Mesh objects in order to introduce this application in the Service Mesh and publish it to external clients.</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -318,7 +318,7 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> with the value provided 
 <div class="sect2">
 <h3 id="gw"><a class="anchor" href="#gw"></a>Gateways</h3>
 <div class="paragraph">
-<p>First at all, it is required to create a Gateway for external access. In the <em>Jump App</em> architecture, you have a couple of services which have to be exposes to external clients in order to present the Frontend and Backend services.</p>
+<p>First of all, it is required to create a Gateway for external access. In the <em>Jump App</em> architecture, you have a couple of services which have to be exposes to external clients in order to present the Frontend and Backend services.</p>
 </div>
 <div class="paragraph">
 <p>Please, return to git repository and create <strong>gateways</strong> through the respective Openshift template executing the following command:</p>
@@ -404,7 +404,7 @@ Please, replace <strong>&lt;user_namespace&gt;</strong> with the value provided 
 <p>The ServiceMeshMemberRoll lists the projects belonging to the control plane. Only projects listed in the ServiceMeshMemberRoll are affected by the control plane.</p>
 </div>
 <div class="paragraph">
-<p>In order to add this new project to the Service Mesh and make possible the traffic between each microservice, it is required to modify the ServiceMeshMemberRoll <strong>default</strong> object at this moment.</p>
+<p>In order to add this new project to the Service Mesh and make the traffic between each microservice possible, it is required to modify the ServiceMeshMemberRoll <strong>default</strong> object at this moment.</p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -447,7 +447,7 @@ If you are an advanced user and can not wait for the instructor, please visit <a
 <div class="sect2">
 <h3 id="annotation"><a class="anchor" href="#annotation"></a>Add <em>Istio Sidecar</em> annotation in <em>Jump App</em> deployments</h3>
 <div class="paragraph">
-<p>Once traffic flow objects are created and your namespace is included as member in the Service Mesh Control Plane, it is time to include a specific annotation in your app deployments in order to allow Service Mesh control and run the respective envoy sidecar automatically.</p>
+<p>Once traffic flow objects are created and your namespace is included as a member in the Service Mesh Control Plane, it is time to include a specific annotation in your app deployments in order to allow Service Mesh control and run the respective envoy sidecar automatically.</p>
 </div>
 <div class="paragraph">
 <p>Please, edit each <em>Jump App Microservice</em> deployment executing the commands added below:</p>
@@ -528,7 +528,7 @@ If you are an advanced user and can not wait for the instructor, please visit <a
 <p>An OpenShift Container Platform <strong>route</strong> exposes a service at a host name, such as www.example.com, so that external clients can reach it by name. When you manage routes outside Service Mesh, it is required to create these objects in each namespace.</p>
 </div>
 <div class="paragraph">
-<p>Once you have a project integrated in Service Mesh, routes should be created in istio-system, or wherever the control plane is installed, to make this external service available through the Istio Ingress Gateway. For this reason, it is required to follow next steps:</p>
+<p>Once you have a project integrated in Service Mesh, routes should be created in istio-system, or wherever the control plane is installed, to make this external service available through the Istio Ingress Gateway. For this reason, it is required to follow the next steps:</p>
 </div>
 <div class="sect3">
 <h4 id="_delete_all_current_routes_in_user_namespace"><a class="anchor" href="#_delete_all_current_routes_in_user_namespace"></a><strong>Delete all current routes in &lt;user_namespace&gt;</strong></h4>
@@ -568,7 +568,7 @@ If you are an advanced user and can not wait for the instructor, please visit <a
 <div class="sect2">
 <h3 id="test"><a class="anchor" href="#test"></a>Confirm <em>Jump App</em> is running again</h3>
 <div class="paragraph">
-<p>Once <em>Jump App</em> objects have been created in Openshift, it is required to follow next steps in order to ensure your demo app is running properly:</p>
+<p>Once <em>Jump App</em> objects have been created in Openshift, it is required to follow the next steps in order to ensure your demo app is running properly:</p>
 </div>
 <div class="admonitionblock note">
 <table>

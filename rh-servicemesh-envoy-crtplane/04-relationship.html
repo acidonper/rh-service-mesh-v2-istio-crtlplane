@@ -285,7 +285,7 @@
 <h2 id="previous"><a class="anchor" href="#previous"></a>Create a new microservice version</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>First at all, it is required to create a new microservice <em>deployment</em> and a <em>service</em> objects for being able to work with different micro versions in Service Mesh.</p>
+<p>First of all, it is required to create a new microservice <em>deployment</em> and a <em>service</em> objects to be able to work with different micro versions in Service Mesh.</p>
 </div>
 <div class="paragraph">
 <p>Please, create the previous object through the respective Openshift template executing the following command:</p>
@@ -318,10 +318,10 @@
 <h2 id="reviewing"><a class="anchor" href="#reviewing"></a>Review Red Hat Service Mesh objects</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When a new Service Mesh object is created in a specific namespace, a set of configurations blocks are added to Envoy proxies in order to be able to apply these rules in the mesh traffic flow.</p>
+<p>When a new Service Mesh object is created in a specific namespace, a set of configuration blocks are added to Envoy proxies in order to be able to apply these rules in the mesh traffic flow.</p>
 </div>
 <div class="paragraph">
-<p>In this step, you will review how these objects affect Envoy proxies getting their configuration from Envoy itself. In order to be able to obtain some information from pods, it is required to obtain pods names before starting this section:</p>
+<p>In this step, you will review how these objects affect Envoy proxies getting their configuration from Envoy itself. In order to be able to obtain some information from pods, it is required to obtain the pods names before starting this section:</p>
 </div>
 <div class="listingblock lines_7 console-input">
 <div class="content">
@@ -496,7 +496,7 @@ Additionally, perform a GET request using <em>curl</em> in order to test out hea
 <p><strong>KIALI</strong></p>
 </div>
 <div class="paragraph">
-<p>Jump App is generating traffic flow thanks to the frontend where was defined an specific number of continuous jumps. In order to review the Service Mesh traffic flow in your project, please visit Kiali console <strong>&lt;kiali_url&gt;</strong> (<em>E.g. <a href="https://kiali-istio-system.apps.tutorialrhmesh.sandbox507.opentlc.com" class="bare">https://kiali-istio-system.apps.tutorialrhmesh.sandbox507.opentlc.com</a></em>):</p>
+<p>Jump App is generating traffic flow thanks to the frontend where was given a specific number of continuous jumps. In order to review the Service Mesh traffic flow in your project, please visit Kiali console <strong>&lt;kiali_url&gt;</strong> (<em>E.g. <a href="https://kiali-istio-system.apps.tutorialrhmesh.sandbox507.opentlc.com" class="bare">https://kiali-istio-system.apps.tutorialrhmesh.sandbox507.opentlc.com</a></em>):</p>
 </div>
 <div class="imageblock">
 <div class="content">
